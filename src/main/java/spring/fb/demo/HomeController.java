@@ -6,7 +6,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,15 +19,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import app.server.handling.ServerInterf;
-import app.utils.dto.InputDataForLDA;
-import app.utils.dto.PostData;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import app.server.handling.ServerInterf;
+import app.utils.dto.FacebookData;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
+import com.restfb.types.Comment;
 import com.restfb.types.Post;
 import com.restfb.types.User;
 
@@ -38,11 +41,14 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HomeController.class);
 
-	private static final int MAX_POST_LIMITED = 50;
+	private static final int MAX_POST_LIMITED = 2;
 
 	private FacebookClient facebookClient23;
-	private ServerInterf server;
+	public static ServerInterf server;
 	private Registry myRegis;
+	
+	//THAINT
+	private FacebookData inputDataForService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model) {
@@ -55,12 +61,7 @@ public class HomeController {
 				server = (ServerInterf) myRegis.lookup("server");
 			}
 			if (server != null) {
-				System.out.println("qtran: " + server.hello());
-				System.out
-						.println("This is a demo: "
-								+ server.runAnalyzeSentiment(
-										"Hôm nay anh không vui và cũng không hạnh phúc tí nào em à!",
-										true));
+				logger.info("qtran: " + server.hello());
 			} else {
 				return "error";
 			}
@@ -107,99 +108,29 @@ public class HomeController {
 			String listPageID[] = pageID.split(",");
 
 			for (String idItem : listPageID) {
+				// TODO: need to add parameter: since date value
 				listPosts = facebookClient23.fetchConnection(idItem.trim()
 						+ "/feed", Post.class,
-						Parameter.with("limit", MAX_POST_LIMITED));
+						Parameter.with("limit", MAX_POST_LIMITED),
+						Parameter.with("since", "11/01/2015"));
 				pagesPosts.put(idItem, listPosts);
 			}
 		}
 
-		List<PostData> listPostDatas = new ArrayList<>();
-		PostData postData;
-
-		// ThaiNT
-		InputDataForLDA inputDataForLDA = new InputDataForLDA();
 		// TODO
-		List<String> listOfPostFBForLDA = new ArrayList<String>();
+		this.inputDataForService = new FacebookData();
+		inputDataForService = getFBDataForService(pagesPosts);
+		server.processLDA(inputDataForService);
 
-		for (Entry<String, Connection<Post>> item : pagesPosts.entrySet()) {
-			System.out.println("Working with page: " + item.getKey());
-			for (Post post : item.getValue().getData()) {
-				postData = new PostData();
-				postData.setCaption(post.getCaption() != null ? post
-						.getCaption()/* .replaceAll("\\d","") */: "");
-				postData.setComments(post.getComments());
-				postData.setCreatedTime(post.getCreatedTime());
-				postData.setDescription(post.getDescription() != null ? post
-						.getDescription()/* .replaceAll("\\d","") */: "");
-				postData.setLikes(post.getLikes());
-				postData.setLikesCount(post.getLikesCount());
-				postData.setMessage(post.getMessage() != null ? post
-						.getMessage()/* .replaceAll("\\d","") */: "");
-				postData.setPostID(post.getId());
-				postData.setStory(post.getStory() != null ? post.getStory()
-						: "");
-				postData.setUpdatedTime(post.getUpdatedTime());
-				try {
-					StringBuffer bufferItem = new StringBuffer();
-
-					bufferItem
-							.append(post.getDescription() != null ? covertStr(removeNumber(postData
-									.getDescription())) : "");
-					bufferItem
-							.append(post.getMessage() != null ? covertStr(removeNumber(post
-									.getMessage())) : "");
-					bufferItem
-							.append(post.getCaption() != null ? covertStr(postData
-									.getCaption()) : "");
-					bufferItem
-							.append(post.getStory() != null ? covertStr(postData
-									.getStory()) : "");
-
-					// analyze all comments
-					/*
-					 * if (post.getCommentsCount() > 0) {
-					 * 
-					 * for (Comment cmt : post.getComments().getData()) {
-					 * bufferItem.append(". ");
-					 * bufferItem.append(cmt.getMessage()); if
-					 * (cmt.getCommentCount() > 0) { for (Comment subCmt :
-					 * cmt.getComments().getData()) { bufferItem.append(". ");
-					 * if(subCmt.getMessage() != null){
-					 * bufferItem.append(subCmt.
-					 * getMessage().replaceAll("\\d","")); } } } } }
-					 */
-					// postData.setSentimentScore(server.runAnalyzeSentiment(bufferItem.toString(),
-					// true));
-
-					listOfPostFBForLDA.add(bufferItem.toString());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					req.getSession()
-							.setAttribute("errorDetail", e.getMessage());
-					return "error";
-				}
-
-				listPostDatas.add(postData);
-			}
-		}
-
-		model.addAttribute("listPostDatas", listPostDatas);
-
-		// TODO
-		inputDataForLDA.setListOfPostFBForLDA(listOfPostFBForLDA);
-		server.processLDA(inputDataForLDA);
-
-		return "home";
+		return "viewTopics";
 	}
-
 	public String removeNumber(String input) {
 		return input = input.replaceAll("[0-9]", "");
 	}
 
 	public String covertStr(String input) {
 
+		input = removeNumber(input);
 		input = input.replace("á", "á");
 		input = input.replace("ố", "ố");
 		input = input.replace("ể", "ể");
@@ -256,4 +187,51 @@ public class HomeController {
 		return input;
 	}
 
+	public FacebookData getFBDataForService(Map<String, Connection<Post>> pagesPosts) {
+		
+		FacebookData returnData = new FacebookData();
+		
+		Map<String, List<String>> inputData = new LinkedHashMap<String, List<String>>();
+
+		for (Entry<String, Connection<Post>> item : pagesPosts.entrySet()) {
+			// get each page
+			for (Post post : item.getValue().getData()) {
+				List<String> listComment = new ArrayList<String>();
+				if (post.getComments() != null) {
+					for (Comment cmt : post.getComments().getData()) {
+						listComment.add(covertStr(cmt.getMessage()));
+						
+//						Connection<Comment> allComments = facebookClient23
+//								.fetchConnection(cmt.getId()
+//												+ "/comments", Comment.class);
+//						// get subComment
+//						if (allComments != null) {
+//							for (Comment subCmt : allComments.getData()) {
+//								listComment.add(covertStr(subCmt.getMessage()));
+//							}
+//						}
+						
+					}
+				}
+				// Return data <Status, List<Comment of this Status>>
+				inputData.put(covertStr(post.getMessage()), listComment);
+			}
+		}
+		
+		// Set data for DTO to transfer to Service
+		returnData.setFbDataForService(inputData);
+		
+		return returnData;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/topicID", method = RequestMethod.GET, produces = "text/html; charset=utf-8") 
+	public String getPieData(Model model, HttpServletRequest request) throws RemoteException {
+		
+		// first of all, we need to get list of comment to process sentiment
+		
+		
+		return null;
+		
+	}
 }
