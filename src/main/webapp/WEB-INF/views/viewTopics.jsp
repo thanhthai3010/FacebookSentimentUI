@@ -59,8 +59,7 @@
 	function generateCode(obj, col) {
 		var str = "";
 		str += String.format(
-						'<div class="{0}" id="{1}" onclick="divClick(this)" data-value="{2}"  ></div>',
-						col, "id" + obj.idTopic, obj.idTopic);
+						'<div class="{0}" id="{1}" onclick="divClick(this)" data-value="{2}"  ></div>', col, "id" + obj.idTopic, obj.idTopic);
 		return str;
 	}
 
@@ -92,8 +91,7 @@
 										"<div class='breakLine'></div>");
 						}
 						break;
-					case 5:
-					case 6: //hien thi 3-2
+					case 5: //hien thi 3-2
 						for (var i = 0; i < objs.length; i++) {
 							if (i < 3) {
 								$('#display').append(
@@ -102,6 +100,15 @@
 								$('#display').append(
 										generateCode(objs[i], "col-md-6"));
 							}
+							if (i == 2)
+								$('#display').append(
+										"<div class='breakLine'></div>");
+						}
+						break;
+					case 6: //hien thi 3-3
+						for (var i = 0; i < objs.length; i++) {
+							$('#display').append(
+									generateCode(objs[i], "col-md-4"));
 							if (i == 2)
 								$('#display').append(
 										"<div class='breakLine'></div>");
@@ -141,10 +148,8 @@
 			}).on("end", draw).start();
 
 			function draw(words) {
-				d3.select(id).append("svg").attr("width", 300).attr("height",
-						300).append("g")
-						.attr("transform", "translate(150,150)").selectAll(
-								"text").data(words).enter().append("text")
+				d3.select(id).append("svg").attr("width", 300).attr("height", 300).append("g")
+						.attr("transform", "translate(150,150)").selectAll("text").data(words).enter().append("text")
 						.style("font-size", function(d) {
 							return d.size + "px";
 						}).style("font-family", "Roboto Slab").style("fill",
