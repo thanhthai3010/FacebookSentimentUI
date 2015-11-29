@@ -1,10 +1,6 @@
 package app.utils.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gson.Gson;
 
 public class PieData implements Serializable{
 
@@ -38,19 +34,15 @@ public class PieData implements Serializable{
 	public void setContentData(String contentData) {
 		this.contentData = contentData;
 	}
-	
-	public static String pieDataToJson(List<PieData> listPieData){
-		return new Gson().toJson(listPieData);
-	}
 
 	public static void main(String[] args) {
-		List<PieData> listPie = new ArrayList<PieData>();
+		ListPieData listPie = new ListPieData();
 		for (int i = 0; i < 8; i++) {
 			PieData a = new PieData(i, "this is content of " + i);
 			listPie.add(a);
 		}
 		
-		System.out.println(PieData.pieDataToJson(listPie));
+		System.out.println(listPie.pieDataToJson());
 	}
 	
 }

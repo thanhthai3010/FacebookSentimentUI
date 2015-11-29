@@ -59,7 +59,7 @@
 	function generateCode(obj, col) {
 		var str = "";
 		str += String.format(
-						'<div class="{0}" id="{1}" onclick="divClick(this)" data-value="{2}"  ></div>', col, "id" + obj.idTopic, obj.idTopic);
+						'<div class="{0}" id="{1}" onclick="divClick(this)" data-value="{2}" style="cursor:pointer" ></div>', col, "id" + obj.idTopic, obj.idTopic);
 		return str;
 	}
 

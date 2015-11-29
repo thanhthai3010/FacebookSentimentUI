@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.server.handling.ServerInterf;
 import app.utils.dto.FacebookData;
+
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
@@ -41,14 +42,24 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HomeController.class);
 
-	private static final int MAX_POST_LIMITED = 2;
+	private static final int MAX_POST_LIMITED = 50;
 
 	private FacebookClient facebookClient23;
 	public static ServerInterf server;
 	private Registry myRegis;
-	
-	//THAINT
+
+	// THAINT
 	private FacebookData inputDataForService;
+
+	/**
+	 * String is blank
+	 */
+	private static final String STRING_BLANK = "";
+	
+	/**
+	 * String space
+	 */
+	private static final String STRING_SPACE = " ";
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model) {
@@ -91,7 +102,7 @@ public class HomeController {
 				Version.VERSION_2_3);
 		Connection<Post> listPosts;
 
-		if (pageID == null || pageID == "") {
+		if (pageID == null || pageID == STRING_BLANK) {
 
 			// get user's feed
 			listPosts = facebookClient23.fetchConnection("me/feed", Post.class,
@@ -99,7 +110,7 @@ public class HomeController {
 			Connection<User> user = facebookClient23.fetchConnection("me",
 					User.class, Parameter.with("fields", "id,name"));
 			if (user != null && user.getData().size() > 0) {
-				String userName = user.getData().get(0).getFirstName() + " "
+				String userName = user.getData().get(0).getFirstName() + STRING_SPACE
 						+ user.getData().get(0).getLastName();
 				req.setAttribute("userID", userName);
 			}
@@ -124,73 +135,84 @@ public class HomeController {
 
 		return "viewTopics";
 	}
-	public String removeNumber(String input) {
-		return input = input.replaceAll("[0-9]", "");
-	}
 
+	/**
+	 * Convert input from font Helvetica to UTF-8 format
+	 * 
+	 * @param input String
+	 * @return String after convert to UTF-8 String
+	 */
 	public String covertStr(String input) {
-
-		input = removeNumber(input);
-		input = input.replace("á", "á");
-		input = input.replace("ố", "ố");
-		input = input.replace("ể", "ể");
-		input = input.replace("ọ", "ọ");
-		input = input.replace("ủ", "ủ");
-		input = input.replace("ạ", "ạ");
-		input = input.replace("ẽ", "ẽ");
-		input = input.replace("ẻ", "ẻ");
-		input = input.replace("ấ", "ấ");
-		input = input.replace("ự", "ự");
-		input = input.replace("ụ", "ụ");
-		input = input.replace("ó", "ó");
-		input = input.replace("ỹ", "ỹ");
-		input = input.replace("ớ", "ớ");
-		input = input.replace("ợ", "ợ");
-		input = input.replace("ì", "ì");
-		input = input.replace("ị", "ị");
-		input = input.replace("à", "à");
-		input = input.replace("í", "í");
-		input = input.replace("ờ", "ờ");
-		input = input.replace("ặ", "ặ");
-		input = input.replace("ằ", "ằ");
-		input = input.replace("ệ", "ệ");
-		input = input.replace("ế", "ế");
-		input = input.replace("ề", "ề");
-		input = input.replace("ổ", "ổ");
-		input = input.replace("ẳ", "ẳ");
-		input = input.replace("ứ", "ứ");
-		input = input.replace("ả", "ả");
-		input = input.replace("ù", "ù");
-		input = input.replace("ỏ", "ỏ");
-		input = input.replace("ỗ", "ỗ");
-		input = input.replace("ỉ", "ỉ");
-		input = input.replace("ò", "ò");
-		input = input.replace("ễ", "ễ");
-		input = input.replace("ú", "ú");
-		input = input.replace("ầ", "ầ");
-		input = input.replace("ã", "ã");
-		input = input.replace("ẫ", "ẫ");
-		input = input.replace("ữ", "ữ");
-		input = input.replace("ồ", "ồ");
-		input = input.replace("ẩ", "ẩ");
-		input = input.replace("ừ", "ừ");
-		input = input.replace("ũ", "ũ");
-		input = input.replace("ý", "ý");
-		input = input.replace("ử", "ử");
-		input = input.replace("ộ", "ộ");
-		input = input.replace("ậ", "ậ");
-		input = input.replace("ở", "ở");
-		input = input.replace("ĩ", "ĩ");
-		input = input.replace("ắ", "ắ");
-		input = input.replace("ỡ", "ỡ");
+		if (input != null && !STRING_BLANK.equals(input)) {
+			
+			input = input.replaceAll("#\\s*(\\w+)", "");
+			input = input.replace("á", "á");
+			input = input.replace("ố", "ố");
+			input = input.replace("ể", "ể");
+			input = input.replace("ọ", "ọ");
+			input = input.replace("ủ", "ủ");
+			input = input.replace("ạ", "ạ");
+			input = input.replace("ẽ", "ẽ");
+			input = input.replace("ẻ", "ẻ");
+			input = input.replace("ấ", "ấ");
+			input = input.replace("ự", "ự");
+			input = input.replace("ụ", "ụ");
+			input = input.replace("ó", "ó");
+			input = input.replace("ỹ", "ỹ");
+			input = input.replace("ớ", "ớ");
+			input = input.replace("ợ", "ợ");
+			input = input.replace("ì", "ì");
+			input = input.replace("ị", "ị");
+			input = input.replace("à", "à");
+			input = input.replace("í", "í");
+			input = input.replace("ờ", "ờ");
+			input = input.replace("ặ", "ặ");
+			input = input.replace("ằ", "ằ");
+			input = input.replace("ệ", "ệ");
+			input = input.replace("ế", "ế");
+			input = input.replace("ề", "ề");
+			input = input.replace("ổ", "ổ");
+			input = input.replace("ẳ", "ẳ");
+			input = input.replace("ứ", "ứ");
+			input = input.replace("ả", "ả");
+			input = input.replace("ù", "ù");
+			input = input.replace("ỏ", "ỏ");
+			input = input.replace("ỗ", "ỗ");
+			input = input.replace("ỉ", "ỉ");
+			input = input.replace("ò", "ò");
+			input = input.replace("ễ", "ễ");
+			input = input.replace("ú", "ú");
+			input = input.replace("ầ", "ầ");
+			input = input.replace("ã", "ã");
+			input = input.replace("ẫ", "ẫ");
+			input = input.replace("ữ", "ữ");
+			input = input.replace("ồ", "ồ");
+			input = input.replace("ẩ", "ẩ");
+			input = input.replace("ừ", "ừ");
+			input = input.replace("ũ", "ũ");
+			input = input.replace("ý", "ý");
+			input = input.replace("ử", "ử");
+			input = input.replace("ộ", "ộ");
+			input = input.replace("ậ", "ậ");
+			input = input.replace("ở", "ở");
+			input = input.replace("ĩ", "ĩ");
+			input = input.replace("ắ", "ắ");
+			input = input.replace("ỡ", "ỡ");
+		}
 
 		return input;
 	}
 
-	public FacebookData getFBDataForService(Map<String, Connection<Post>> pagesPosts) {
-		
+	/**
+	 * get facebook status and all of comment for Service process
+	 * @param pagesPosts List of facebook
+	 * @return data for Service process
+	 */
+	public FacebookData getFBDataForService(
+			Map<String, Connection<Post>> pagesPosts) {
+
 		FacebookData returnData = new FacebookData();
-		
+
 		Map<String, List<String>> inputData = new LinkedHashMap<String, List<String>>();
 
 		for (Entry<String, Connection<Post>> item : pagesPosts.entrySet()) {
@@ -199,39 +221,37 @@ public class HomeController {
 				List<String> listComment = new ArrayList<String>();
 				if (post.getComments() != null) {
 					for (Comment cmt : post.getComments().getData()) {
-						listComment.add(covertStr(cmt.getMessage()));
-						
-//						Connection<Comment> allComments = facebookClient23
-//								.fetchConnection(cmt.getId()
-//												+ "/comments", Comment.class);
-//						// get subComment
-//						if (allComments != null) {
-//							for (Comment subCmt : allComments.getData()) {
-//								listComment.add(covertStr(subCmt.getMessage()));
-//							}
-//						}
-						
+						String cmtMessage = cmt.getMessage();
+						if (cmtMessage != null
+								&& !STRING_BLANK.equals(cmtMessage)
+								&& !STRING_SPACE.equals(cmtMessage)) {
+							listComment.add(covertStr(cmtMessage));
+						}
 					}
 				}
 				// Return data <Status, List<Comment of this Status>>
-				inputData.put(covertStr(post.getMessage()), listComment);
+				String postMessage = post.getMessage();
+				if (postMessage != null && !STRING_BLANK.equals(postMessage)
+						&& !STRING_SPACE.equals(postMessage)) {
+					inputData.put(covertStr(postMessage), listComment);
+				}
 			}
 		}
-		
+
 		// Set data for DTO to transfer to Service
 		returnData.setFbDataForService(inputData);
-		
+
 		return returnData;
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/topicID", method = RequestMethod.GET, produces = "text/html; charset=utf-8") 
-	public String getPieData(Model model, HttpServletRequest request) throws RemoteException {
-		
+	@RequestMapping(value = "/topicID", method = RequestMethod.GET, produces = "text/html; charset=utf-8")
+	public String getPieData(Model model, HttpServletRequest request)
+			throws RemoteException {
+
 		// first of all, we need to get list of comment to process sentiment
-		
-		
+
 		return null;
-		
+
 	}
 }
