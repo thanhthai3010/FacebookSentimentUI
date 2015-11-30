@@ -11,7 +11,7 @@
 	</appender>
 	
 	<!-- Application Loggers -->
-	<logger name="spring.fb.demo">
+	<logger name="app.client.controller">
 		<level value="info" />
 	</logger>
 	

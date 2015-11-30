@@ -1,7 +1,8 @@
 package app.client.controller;
 
 import java.rmi.RemoteException;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,15 +34,14 @@ import com.restfb.Parameter;
 import com.restfb.Version;
 import com.restfb.types.Comment;
 import com.restfb.types.Post;
-import com.restfb.types.User;
 
 @Controller
 public class GetFacebookDataController {
 
+	private static final String INPUT_DATE = "11/01/2015";
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(GetFacebookDataController.class);
-
-	private static final int MAX_POST_LIMITED = 300;
 
 	private FacebookClient facebookClient23;
 
@@ -59,7 +59,7 @@ public class GetFacebookDataController {
 
 	@RequestMapping(value = "/getFBData", method = RequestMethod.GET)
 	public String home(Model model) {
-		logger.debug("Welcome get fb data page!");
+		logger.info("Welcome get fb data page!");
 
 		return "getFBData";
 	}
@@ -92,51 +92,36 @@ public class GetFacebookDataController {
 		String pageID = fbParamObj.get("pageID").getAsString();
 
 		facebookClient23 = new DefaultFacebookClient(userAT, Version.VERSION_2_3);
-		Connection<Post> listPosts;
 
-		if (pageID == null || pageID == STRING_BLANK) {
+		this.listPageID = pageID.split(",");
 
-			// get user's feed
-			listPosts = facebookClient23.fetchConnection("me/feed", Post.class,
-					Parameter.with("limit", MAX_POST_LIMITED));
-			Connection<User> user = facebookClient23.fetchConnection("me",
-					User.class, Parameter.with("fields", "id,name"));
-			if (user != null && user.getData().size() > 0) {
-				String userName = user.getData().get(0).getFirstName()
-						+ STRING_SPACE + user.getData().get(0).getLastName();
-				req.setAttribute("userID", userName);
-			}
-		} else {
+		for (String itemPageID : listPageID) {
+			// TODO: need to add parameter: since date value
+			// Store list of post foreach page
+			List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
 
-			this.listPageID = pageID.split(",");
+			Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
+					itemPageID.trim() + "/feed", Post.class,
+					Parameter.with("since", INPUT_DATE));
 
-			for (String itemPageID : listPageID) {
-				// TODO: need to add parameter: since date value
-				// Store list of post foreach page
-				List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
-				
-				Connection<Post> listPostsFirst = facebookClient23.fetchConnection(itemPageID.trim()
-						+ "/feed", Post.class,
-						Parameter.with("since", "11/29/2015"));
-
-				// New
-				pagesPosts.add(listPostsFirst.getData());
-				String nextPage = listPostsFirst.getNextPageUrl();
-				 while (nextPage  != null){
-					 Connection<Post> listPostsContinous;
-					 listPostsContinous  = facebookClient23.fetchConnectionPage(nextPage,  Post.class);
-					// Check is the last page
-					if (listPostsContinous.getData().size() > 0) {
-						pagesPosts.add(listPostsContinous.getData());
-					}
-					// Get URL of next page
-					nextPage = listPostsContinous.getNextPageUrl();
-				};
-				// Put data
-				hsMapData.put(itemPageID, pagesPosts);
-			}
+			// New
+			pagesPosts.add(listPostsFirst.getData());
+			String nextPage = listPostsFirst.getNextPageUrl();
+			while (nextPage != null) {
+				Connection<Post> listPostsContinous;
+				listPostsContinous = facebookClient23.fetchConnectionPage(
+						nextPage, Post.class);
+				// Check is the last page
+				if (listPostsContinous.getData().size() > 0) {
+					pagesPosts.add(listPostsContinous.getData());
+				}
+				// Get URL of next page
+				nextPage = listPostsContinous.getNextPageUrl();
+			};
+			// Put data
+			hsMapData.put(itemPageID, pagesPosts);
 		}
-		logger.debug("done get fb data!");
+		logger.info("done get fb data!");
 
 		try {
 			getFBDataForService(hsMapData);
@@ -207,9 +192,11 @@ public class GetFacebookDataController {
 
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(date);
-							dateTime = cal.get(Calendar.DATE) + "/"
-									+ (cal.get(Calendar.MONTH) + 1) + "/"
-									+ cal.get(Calendar.YEAR);
+							dateTime = cal.get(Calendar.YEAR) + "-"
+									+ (cal.get(Calendar.MONTH) + 1) + "-"
+									 + cal.get(Calendar.DATE);
+//									+ (cal.get(Calendar.MONTH) + 1) + "/"
+//									+ cal.get(Calendar.YEAR);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
@@ -261,7 +248,7 @@ public class GetFacebookDataController {
 					}
 			}
 		}
-		logger.debug("Done delete POST_DATA with PageID");
+		logger.info("Done delete POST_DATA with PageID");
 	}
 
 	/**
@@ -292,7 +279,7 @@ public class GetFacebookDataController {
 					}
 			}
 		}
-		logger.debug("Done delete COMMENT_DATA with PageID");
+		logger.info("Done delete COMMENT_DATA with PageID");
 	}
 
 	/**
@@ -336,7 +323,7 @@ public class GetFacebookDataController {
 					}
 			}
 		}
-		logger.debug("Done Save POST_DATA with PageID");
+		logger.info("Done Save POST_DATA with PageID");
 	}
 
 	public void saveCommentData(List<Comment_Data> lstComment) {
@@ -370,7 +357,7 @@ public class GetFacebookDataController {
 					}
 			}
 		}
-		logger.debug("Done save COMMENT_DATA with PageID");
+		logger.info("Done save COMMENT_DATA with PageID");
 	}
 
 	/**
