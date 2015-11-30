@@ -1,7 +1,6 @@
 package app.client.controller;
 
 import java.rmi.RemoteException;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.utils.dto.Comment_Data;
+import app.utils.dto.FacebookDataToInsertDB;
 import app.utils.dto.Post_Data;
 
 import com.google.gson.Gson;
@@ -38,7 +38,7 @@ import com.restfb.types.Post;
 @Controller
 public class GetFacebookDataController {
 
-	private static final String INPUT_DATE = "11/01/2015";
+	private static final String INPUT_DATE = "11/29/2015";
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GetFacebookDataController.class);
@@ -124,7 +124,7 @@ public class GetFacebookDataController {
 		logger.info("done get fb data!");
 
 		try {
-			getFBDataForService(hsMapData);
+			saveFBData(hsMapData);
 			response = "{\"ID\": \"1\"}";
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -141,7 +141,7 @@ public class GetFacebookDataController {
 	 * @return data for Service process
 	 * @throws SQLException
 	 */
-	public void getFBDataForService(HashMap<String, List<List<Post>>> hsMapData)
+	public void saveFBData(HashMap<String, List<List<Post>>> hsMapData)
 			throws SQLException {
 
 		List<Post_Data> listPost_Data = new ArrayList<Post_Data>();
@@ -195,8 +195,6 @@ public class GetFacebookDataController {
 							dateTime = cal.get(Calendar.YEAR) + "-"
 									+ (cal.get(Calendar.MONTH) + 1) + "-"
 									 + cal.get(Calendar.DATE);
-//									+ (cal.get(Calendar.MONTH) + 1) + "/"
-//									+ cal.get(Calendar.YEAR);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
@@ -212,152 +210,15 @@ public class GetFacebookDataController {
 				}
 			}
 		}
-
-		// After get data, we need to save
-		// POST_DATA
-		savePostData(listPost_Data);
-		// Save Comment DATA
-		saveCommentData(listComment_Data);
-	}
-
-	/**
-	 * Delete all of records in table POST_DATA has pageID
-	 */
-	public void deletePostDataWithPageID() {
-		PreparedStatement preparedStatement = null;
-		for (String pageID : this.listPageID) {
-
-			String insertTableSQL = "DELETE FROM POST_DATA "
-					+ " WHERE PAGE_ID = ?";
-
-			try {
-				preparedStatement = JdbcMySQLDriver.getPrepareStm(insertTableSQL);
-
-				preparedStatement.setLong(1, Long.parseLong(pageID));
-				// execute SQL stetement
-				preparedStatement.executeUpdate();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (preparedStatement != null)
-					try {
-						preparedStatement.close();
-						JdbcMySQLDriver.closeConn();
-					} catch (SQLException logOrIgnore) {
-					}
-			}
+		FacebookDataToInsertDB fbDataToInsertDB = new FacebookDataToInsertDB(
+				listPost_Data, listComment_Data, this.listPageID);
+		try {
+			HomeController.server.saveFBData(fbDataToInsertDB);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		logger.info("Done delete POST_DATA with PageID");
-	}
-
-	/**
-	 * Delete all of record in table COMMENT_DATA has pageID 
-	 */
-	public void deleteCommentDataWithPageID() {
-		PreparedStatement preparedStatement = null;
-		for (String pageID : this.listPageID) {
-
-			String insertTableSQL = "DELETE FROM COMMENT_DATA "
-					+ " WHERE PAGE_ID = ?";
-
-			try {
-				preparedStatement = JdbcMySQLDriver.getPrepareStm(insertTableSQL);
-
-				preparedStatement.setLong(1, Long.parseLong(pageID));
-				// execute SQL stetement
-				preparedStatement.executeUpdate();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (preparedStatement != null)
-					try {
-						preparedStatement.close();
-						JdbcMySQLDriver.closeConn();
-					} catch (SQLException logOrIgnore) {
-					}
-			}
-		}
-		logger.info("Done delete COMMENT_DATA with PageID");
-	}
-
-	/**
-	 * Save pageID into table LIST_OF_PAGE
-	 * 
-	 * @param pageID
-	 * @throws SQLException
-	 */
-	public void savePostData(List<Post_Data> lstPostData) {
-
-		// delete Post data
-		deletePostDataWithPageID();
-
-		PreparedStatement preparedStatement = null;
-		for (Post_Data post_Data : lstPostData) {
-
-			String insertTableSQL = "INSERT INTO POST_DATA"
-					+ " (PAGE_ID, POST_ID, POST_CONTENT, DATE_TIME) VALUES"
-					+ " (?, ?, ?, ?)";
-
-			try {
-				preparedStatement = JdbcMySQLDriver.getPrepareStm(insertTableSQL);
-
-				preparedStatement.setLong(1, post_Data.getPageID());
-
-				preparedStatement.setInt(2, post_Data.getPostID());
-
-				preparedStatement.setString(3, post_Data.getPostContent());
-				preparedStatement.setString(4, post_Data.getDateTime());
-				// execute insert SQL stetement
-				preparedStatement.executeUpdate();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (preparedStatement != null)
-					try {
-						preparedStatement.close();
-						JdbcMySQLDriver.closeConn();
-					} catch (SQLException logOrIgnore) {
-					}
-			}
-		}
-		logger.info("Done Save POST_DATA with PageID");
-	}
-
-	public void saveCommentData(List<Comment_Data> lstComment) {
-
-		// delete Comment data
-		deleteCommentDataWithPageID();
-
-		PreparedStatement preparedStatement = null;
-		for (Comment_Data cmData : lstComment) {
-			String insertTableSQL = "INSERT INTO COMMENT_DATA"
-					+ " (PAGE_ID, POST_ID, COMMENT_ID, COMMENT_CONTENT) VALUES"
-					+ " (?, ?, ?, ?)";
-			try {
-				preparedStatement = JdbcMySQLDriver.getPrepareStm(insertTableSQL);
-				preparedStatement.setLong(1, cmData.getPageID());
-				preparedStatement.setInt(2, cmData.getPostID());
-				preparedStatement.setInt(3, cmData.getCommentID());
-				preparedStatement.setString(4,
-						covertStr(cmData.getCommentContent()));
-
-				// execute insert SQL stetement
-				preparedStatement.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (preparedStatement != null)
-					try {
-						preparedStatement.close();
-						JdbcMySQLDriver.closeConn();
-					} catch (SQLException logOrIgnore) {
-					}
-			}
-		}
-		logger.info("Done save COMMENT_DATA with PageID");
+		
 	}
 
 	/**

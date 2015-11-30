@@ -254,4 +254,10 @@ public class HomeController {
 		return null;
 
 	}
+	
+	@RequestMapping(value = "/sumitPageID", method = RequestMethod.POST)
+	public String processLDA(Model model, HttpServletRequest req){
+		
+		return null;
+	}
 }

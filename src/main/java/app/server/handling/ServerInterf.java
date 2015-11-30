@@ -2,8 +2,8 @@ package app.server.handling;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-
 import app.utils.dto.FacebookData;
+import app.utils.dto.FacebookDataToInsertDB;
 import app.utils.dto.ListPieData;
 import app.utils.dto.ListTopic;
 
@@ -11,8 +11,11 @@ import app.utils.dto.ListTopic;
 public interface ServerInterf extends Remote {
 
 	public String hello() throws RemoteException;
-
+	
+	public void saveFBData(FacebookDataToInsertDB fbDataToInsertDB) throws RemoteException;
+	
 	public double runAnalyzeSentiment(String inputText, boolean isNeedToCheck) throws RemoteException;
+	
 	public String[] runSpellCheckAndToken(String inputText) throws RemoteException;
 	
 	//TODO
