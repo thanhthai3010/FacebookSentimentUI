@@ -21,9 +21,15 @@ public class TopicHandlingController {
 
 	private ListTopic describeTopics;
 	
-	@RequestMapping(value = "/a", method = RequestMethod.GET)
-	public String indexPage(Model model) {
-		return "index";
+	@ResponseBody
+	@RequestMapping(value = "/topicID", method = RequestMethod.GET, produces = "text/html; charset=utf-8")
+	public String getPieData(Model model, HttpServletRequest request)
+			throws RemoteException {
+
+		// first of all, we need to get list of comment to process sentiment
+
+		return null;
+
 	}
 	
 	@RequestMapping(value = "/processLDA", method = RequestMethod.POST)

@@ -7,8 +7,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ import com.restfb.types.Post;
 @Controller
 public class GetFacebookDataController {
 
-	private static final String INPUT_DATE = "11/29/2015";
+	private static final String INPUT_DATE = "11/01/2015";
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GetFacebookDataController.class);
@@ -57,6 +58,11 @@ public class GetFacebookDataController {
 
 	private String[] listPageID;
 
+	/**
+	 * Forward to page get facebook data
+	 * @param model
+	 * @return getFBData web page
+	 */
 	@RequestMapping(value = "/getFBData", method = RequestMethod.GET)
 	public String home(Model model) {
 		logger.info("Welcome get fb data page!");
@@ -64,6 +70,13 @@ public class GetFacebookDataController {
 		return "getFBData";
 	}
 
+	/**
+	 * Call method save data
+	 * @param model
+	 * @param req
+	 * @return message
+	 * @throws RemoteException
+	 */
 	@RequestMapping(value = "/saveFBData", method = RequestMethod.POST)
 	@ResponseBody
 	public String saveFBData(Model model, HttpServletRequest req)
@@ -78,7 +91,7 @@ public class GetFacebookDataController {
 		/**
 		 * Store <PageID, List<Post> data>
 		 */
-		HashMap<String, List<List<Post>>> hsMapData = new HashMap<String, List<List<Post>>>();
+		Map<String, List<List<Post>>> hsMapFBData = new LinkedHashMap<String, List<List<Post>>>();
 
 		/**
 		 * Get parameter from request of client
@@ -119,15 +132,15 @@ public class GetFacebookDataController {
 				nextPage = listPostsContinous.getNextPageUrl();
 			};
 			// Put data
-			hsMapData.put(itemPageID, pagesPosts);
+			hsMapFBData.put(itemPageID, pagesPosts);
 		}
 		logger.info("done get fb data!");
 
 		try {
-			saveFBData(hsMapData);
+			saveFBData(hsMapFBData);
 			response = "{\"ID\": \"1\"}";
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			response = "{\"ID\": \"2\"}";
 		}
 		return response;
@@ -136,12 +149,11 @@ public class GetFacebookDataController {
 	/**
 	 * get facebook status and all of comment for Service process
 	 * 
-	 * @param pagesPosts
-	 *            List of facebook
+	 * @param pagesPosts List of facebook
 	 * @return data for Service process
 	 * @throws SQLException
 	 */
-	public void saveFBData(HashMap<String, List<List<Post>>> hsMapData)
+	public void saveFBData(Map<String, List<List<Post>>> hsMapData)
 			throws SQLException {
 
 		List<Post_Data> listPost_Data = new ArrayList<Post_Data>();
@@ -164,7 +176,7 @@ public class GetFacebookDataController {
 									&& !STRING_SPACE.equals(cmtMessage)) {
 								Comment_Data cmData = new Comment_Data(
 										Long.parseLong(item.getKey()),
-										postIdx, cmIdx, covertStr(cmtMessage));
+										postIdx, cmIdx, replaceSpecialCharacters(cmtMessage));
 								listComment_Data.add(cmData);
 							}
 
@@ -196,12 +208,12 @@ public class GetFacebookDataController {
 									+ (cal.get(Calendar.MONTH) + 1) + "-"
 									 + cal.get(Calendar.DATE);
 						} catch (ParseException e) {
-							e.printStackTrace();
+							logger.info(e.getMessage());
 						}
 
 						Post_Data postDT = new Post_Data(
 								Long.parseLong(item.getKey()), postIdx,
-								covertStr(postMessage), dateTime);
+								replaceSpecialCharacters(postMessage), dateTime);
 						listPost_Data.add(postDT);
 					}
 
@@ -216,7 +228,7 @@ public class GetFacebookDataController {
 			HomeController.server.saveFBData(fbDataToInsertDB);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 		
 	}
@@ -224,67 +236,16 @@ public class GetFacebookDataController {
 	/**
 	 * Convert input from font Helvetica to UTF-8 format
 	 * 
-	 * @param input
-	 *            String
+	 * @param input String
 	 * @return String after convert to UTF-8 String
 	 */
-	public String covertStr(String input) {
+	public String replaceSpecialCharacters(String input) {
 		if (input != null && !STRING_BLANK.equals(input)) {
 
-			input = input.replaceAll("\\p{C}", "");
-			input = input.replaceAll("#\\s*(\\w+)", "");
-			input = input.replace("á", "á");
-			input = input.replace("ố", "ố");
-			input = input.replace("ể", "ể");
-			input = input.replace("ọ", "ọ");
-			input = input.replace("ủ", "ủ");
-			input = input.replace("ạ", "ạ");
-			input = input.replace("ẽ", "ẽ");
-			input = input.replace("ẻ", "ẻ");
-			input = input.replace("ấ", "ấ");
-			input = input.replace("ự", "ự");
-			input = input.replace("ụ", "ụ");
-			input = input.replace("ó", "ó");
-			input = input.replace("ỹ", "ỹ");
-			input = input.replace("ớ", "ớ");
-			input = input.replace("ợ", "ợ");
-			input = input.replace("ì", "ì");
-			input = input.replace("ị", "ị");
-			input = input.replace("à", "à");
-			input = input.replace("í", "í");
-			input = input.replace("ờ", "ờ");
-			input = input.replace("ặ", "ặ");
-			input = input.replace("ằ", "ằ");
-			input = input.replace("ệ", "ệ");
-			input = input.replace("ế", "ế");
-			input = input.replace("ề", "ề");
-			input = input.replace("ổ", "ổ");
-			input = input.replace("ẳ", "ẳ");
-			input = input.replace("ứ", "ứ");
-			input = input.replace("ả", "ả");
-			input = input.replace("ù", "ù");
-			input = input.replace("ỏ", "ỏ");
-			input = input.replace("ỗ", "ỗ");
-			input = input.replace("ỉ", "ỉ");
-			input = input.replace("ò", "ò");
-			input = input.replace("ễ", "ễ");
-			input = input.replace("ú", "ú");
-			input = input.replace("ầ", "ầ");
-			input = input.replace("ã", "ã");
-			input = input.replace("ẫ", "ẫ");
-			input = input.replace("ữ", "ữ");
-			input = input.replace("ồ", "ồ");
-			input = input.replace("ẩ", "ẩ");
-			input = input.replace("ừ", "ừ");
-			input = input.replace("ũ", "ũ");
-			input = input.replace("ý", "ý");
-			input = input.replace("ử", "ử");
-			input = input.replace("ộ", "ộ");
-			input = input.replace("ậ", "ậ");
-			input = input.replace("ở", "ở");
-			input = input.replace("ĩ", "ĩ");
-			input = input.replace("ắ", "ắ");
-			input = input.replace("ỡ", "ỡ");
+			//input = input.replaceAll("\\p{C}", " ");
+			input = input.replaceAll("\n", " ");
+			input = input.replaceAll("\r", " ");
+			input = input.replaceAll("#\\s*(\\w+)", " ");
 		}
 
 		return input;
