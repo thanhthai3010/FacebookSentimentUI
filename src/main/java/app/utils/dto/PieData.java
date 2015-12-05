@@ -2,29 +2,45 @@ package app.utils.dto;
 
 import java.io.Serializable;
 
+/**
+ * data to draw list of comment below
+ * @author thaint
+ *
+ */
 public class PieData implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int tyleColor;
+	/** type of Color base on possitive, negative or neutrial  */
+	private int typeColor;
+	
+	/** content of comment */
 	private String contentData;
 
+	/**
+	 * default constructor
+	 */
 	public PieData() {
 	}
 
+	/**
+	 * Constructor with parameter
+	 * @param tyleColor
+	 * @param contentData
+	 */
 	public PieData(int tyleColor, String contentData) {
-		this.tyleColor = tyleColor;
+		this.typeColor = tyleColor;
 		this.contentData = contentData;
 	}
 
-	public int getTyleColor() {
-		return tyleColor;
+	public int getTypeColor() {
+		return typeColor;
 	}
 
-	public void setTyleColor(int tyleColor) {
-		this.tyleColor = tyleColor;
+	public void setTypeColor(int tyleColor) {
+		this.typeColor = tyleColor;
 	}
 
 	public String getContentData() {
@@ -34,7 +50,7 @@ public class PieData implements Serializable{
 	public void setContentData(String contentData) {
 		this.contentData = contentData;
 	}
-
+	
 	public static void main(String[] args) {
 		ListPieData listPie = new ListPieData();
 		for (int i = 0; i < 8; i++) {
