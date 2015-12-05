@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>
-	Hello Anh Quan!  
+	Welcome to our Social Netword Analysis!
 </h1>
 
 <%-- <P>  The very first post: ${myFeed}. </P> --%>
