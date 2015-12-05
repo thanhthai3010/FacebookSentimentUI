@@ -22,10 +22,6 @@ public interface ServerInterf extends Remote {
 	 */
 	public void saveFBData(FacebookDataToInsertDB fbDataToInsertDB) throws RemoteException;
 	
-//	public double runAnalyzeSentiment(String inputText) throws RemoteException;
-	
-//	public String[] runSpellCheckAndToken(String inputText) throws RemoteException;
-	
 	/**
 	 * thaint
 	 * Processing data for LDA Model
@@ -42,6 +38,12 @@ public interface ServerInterf extends Remote {
 	 */
 	public ListTopic getDescribleTopics() throws RemoteException;
 	
+	/**
+	 * Start sentiment process using topic ID
+	 * @param topicID
+	 * @return
+	 * @throws RemoteException
+	 */
 	public ListPieData processSentiment(int topicID) throws RemoteException;
 	
 	/**
