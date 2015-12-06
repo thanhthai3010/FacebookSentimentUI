@@ -49,7 +49,7 @@
 							// draw Pie Chart first
 							drawChart(JSON.parse(obj.listPieChart));
 							// draw detail data
-							displayDetailData(JSON.parse(obj.listPieData));
+							displayDetailData(JSON.parse(obj.listDetailData));
 						});
 					}
 				});
