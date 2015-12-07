@@ -29,7 +29,10 @@
 
   <body>
     <div id="chart_div" style="width:700; height:500"></div>
-<div id="chart" ></div>
+	<div class="container">
+		<h2>Detail of sentiment analsis</h2>
+		<div id="report_div" style="font-size: 1.15em; color: white;"></div>
+	</div>
 <input type="hidden" id="topicID" value="${topicID }">
 
 	<script>

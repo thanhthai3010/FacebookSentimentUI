@@ -53,7 +53,7 @@ $(function(){
 <div class="header-contain col-sm-10">
 	<div class="col-sm-4 box-info"  id="getFBData">
 		<img src="<c:url value="/resources/image/data.png"/>" height=100 />
-		<h2>DATA LOADING</h2>
+		<h2>DATA CRAWLING</h2>
 		<h3>Get Social Network data for analysis.</h3>
 	</div>
 	<div class="col-sm-4 box-info" id="analysisData">

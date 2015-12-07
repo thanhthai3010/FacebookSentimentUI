@@ -93,10 +93,10 @@ $(function() {
 		d3.layout.cloud().size([ 300, 300 ]).words(data.map(function(d) {
 			return {
 				text : d.text,
-				size : d.value + 20
+				size : d.value*550 + 10
 			};
 		})).rotate(function() {
-			return ~~Math.floor(Math.random() * 20) - 20;
+			return ~~Math.floor(Math.random() * 30) - 20;
 		}).font("Roboto Slab").fontSize(function(d) {
 			return d.size;
 		}).on("end", draw).start();
