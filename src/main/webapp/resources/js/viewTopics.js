@@ -96,7 +96,7 @@ $(function() {
 				size : d.value + 20
 			};
 		})).rotate(function() {
-			return ~~Math.floor(Math.random() * 60) - 28;
+			return ~~Math.floor(Math.random() * 20) - 20;
 		}).font("Roboto Slab").fontSize(function(d) {
 			return d.size;
 		}).on("end", draw).start();
