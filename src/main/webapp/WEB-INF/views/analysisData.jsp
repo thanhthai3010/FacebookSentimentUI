@@ -34,11 +34,13 @@
 			<form action="startAnalysis" role="form" data-toggle="validator" method="post">
 
 				<div class="input-group input-group-lg">
-					<span class="input-group-addon">
-					    <i class="glyphicon glyphicon-th-list"></i>
-					    </span> 
-					    <input class="form-control" placeholder="Facebook PageID"  name="pageID"  type="text"
-						id="id-form">
+					<span class="input-group-addon"> <i class="glyphicon glyphicon-th-list"></i></span>
+					
+					<select class="form-control"  name="pageID">
+					<c:forEach var="pageInfo" items="${listPageInfo}">
+						<option value="${pageInfo.pageID }">${pageInfo.pageName }</option>
+					</c:forEach>
+					</select>
 				</div>
 
 				<div class="input-group input-group-lg">

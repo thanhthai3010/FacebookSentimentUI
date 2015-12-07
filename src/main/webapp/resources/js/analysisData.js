@@ -46,18 +46,12 @@ function setError(message) {
 	document.getElementById("display-error").innerHTML = message;
 }
 function validate() {
-	var id = document.getElementById('id-form');
-	var isValueId = regId.test(id.value);
 	var isDateValid = true;
 
 	var dateFrom = new Date(document.getElementById('date-from').value);
 	var dateTo = new Date(document.getElementById('date-to').value);
 	var currentDate = new Date();
-	if (isValueId == false) {
-		setError("Page ID is invalid ");
-		id.focus();
-		return false;
-	}
+
 	if (dateFrom.getTime() >= currentDate.getTime()) {
 		document.getElementById('date-from').focus();
 		setError("Date from is not great than current date");
