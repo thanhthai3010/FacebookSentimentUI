@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import app.server.handling.ServerInterf;
-import app.utils.dto.FacebookData;
+import app.utils.dto.Page_Info;
 
 /**
  * Handles requests for the application home page.
@@ -29,11 +29,14 @@ public class HomeController {
 			.getLogger(HomeController.class);
 
 	public static ServerInterf server;
+	
 	private Registry myRegis;
-
-	// THAINT
-	private FacebookData inputDataForService;
-
+	
+	/**
+	 * View Home page
+	 * @param model
+	 * @return home page of application
+	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model) {
 		logger.info("Welcome home!");
@@ -45,7 +48,7 @@ public class HomeController {
 				server = (ServerInterf) myRegis.lookup("server");
 			}
 			if (server != null) {
-				logger.info("qtran: " + server.hello());
+				logger.info("finded server: " + server.hello());
 			} else {
 				return "error";
 			}
@@ -58,33 +61,52 @@ public class HomeController {
 			logger.info("(NotBoundException) Failed to find server.");
 			return "error";
 		}
-		return "home";
+		return "homePage";
 	}
 
-	@RequestMapping(value = "/submitAccessToken", method = RequestMethod.POST)
-	public String ProcessAccessToken(Model model, HttpServletRequest req)
-			throws RemoteException {
-		logger.info("View word cloud of topic");
-
-		List<String> lstPageID = new ArrayList<String>();
-		lstPageID.add("447498478655695");
-		
-
-		//TODO
-		// please check value of getFBDataByPageIDAndDate() method return.
-		// If we does not have data, show message for user.
-		this.inputDataForService = new FacebookData();
-		inputDataForService = HomeController.server.getFBDataByPageIDAndDate(
-				lstPageID, "2015-11-22", "2015-11-30");
-		
-		server.processLDA(inputDataForService);
-
-		return "viewTopics";
+	/**
+	 * View page for get facebook data
+	 * @param model
+	 * @param rep
+	 * @return
+	 */
+	@RequestMapping(value = "/getFBData", method = RequestMethod.GET)
+	public String viewGetFBDataPage(Model model, HttpServletRequest rep){
+		logger.info("Welcome get fb data page!");
+		return "getFBData";
 	}
 	
-	@RequestMapping(value = "/sumitPageID", method = RequestMethod.POST)
-	public String processLDA(Model model, HttpServletRequest req){
+	/**
+	 * View main page, analysis facebook data
+	 * @param model
+	 * @param rep
+	 * @return
+	 */
+	@RequestMapping(value = "/analysisData", method = RequestMethod.GET)
+	public String viewAnalysisDataPage(Model model, HttpServletRequest rep){
+		logger.info("Welcome analyzing page!");
 		
-		return null;
+		List<Page_Info> listPageInfo = new ArrayList<Page_Info>();
+		try {
+			listPageInfo = server.getListPageInfo();
+		} catch (RemoteException e) {
+			logger.info("Have an error when getting list of page info");
+		}
+		
+		model.addAttribute("listPageInfo", listPageInfo);
+		
+		return "analysisData";
+	}
+	
+	/**
+	 * View about page
+	 * @param model
+	 * @param rep
+	 * @return
+	 */
+	@RequestMapping(value = "/aboutUs", method = RequestMethod.GET)
+	public String viewAboutUsPage(Model model, HttpServletRequest rep){
+		logger.info("Welcome about us page!");
+		return "aboutUs";
 	}
 }

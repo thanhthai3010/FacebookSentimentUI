@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.utils.dto.FacebookData;
 import app.utils.dto.JsonDataToDrawChart;
-import app.utils.dto.ListPieData;
+import app.utils.dto.ListReportData;
 import app.utils.dto.ListTopic;
 import app.utils.dto.PieChart;
-import app.utils.dto.PieData;
+import app.utils.dto.ReportData;
 
 @Controller
 public class TopicHandlingController {
@@ -122,7 +122,7 @@ public class TopicHandlingController {
 			logger.info("Has problem here");
 		}
 		// first of all, we need to get list of comment to process sentiment
-		ListPieData affterSentiment = HomeController.server.processSentiment(topicID);
+		ListReportData affterSentiment = HomeController.server.processSentiment(topicID);
 		
 		/**
 		 * get data to draw pie chart
@@ -162,7 +162,7 @@ public class TopicHandlingController {
 	 * @param lisPieData
 	 * @return
 	 */
-	public List<PieChart> getCharData(ListPieData lisPieData){
+	public List<PieChart> getCharData(ListReportData lisPieData){
 		// loop all pieData input to calculate sum of each type color
 		
 		List<PieChart> lstPieChar = new ArrayList<PieChart>();
@@ -170,7 +170,7 @@ public class TopicHandlingController {
 		int numOfPos = 0;
 		int numOfNeg = 0;
 		int numOfNeu = 0;
-		for (PieData pieData : lisPieData) {
+		for (ReportData pieData : lisPieData) {
 			switch (pieData.getTypeColor()) {
 			case POSITIVE:
 				numOfPos++;

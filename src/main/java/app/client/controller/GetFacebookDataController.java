@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.utils.dto.Comment_Data;
 import app.utils.dto.FacebookDataToInsertDB;
+import app.utils.dto.Page_Info;
 import app.utils.dto.Post_Data;
 
 import com.google.gson.Gson;
@@ -34,16 +35,18 @@ import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
 import com.restfb.types.Comment;
+import com.restfb.types.Page;
 import com.restfb.types.Post;
 
 @Controller
 public class GetFacebookDataController {
 
-	private static final String INPUT_DATE = "11/01/2015";
-
 	private static final Logger logger = LoggerFactory
 			.getLogger(GetFacebookDataController.class);
 
+	/**
+	 * Facebook library
+	 */
 	private FacebookClient facebookClient23;
 
 	/**
@@ -56,19 +59,10 @@ public class GetFacebookDataController {
 	 */
 	private static final String STRING_SPACE = " ";
 
-	private String[] listPageID;
-
 	/**
-	 * Forward to page get facebook data
-	 * @param model
-	 * @return getFBData web page
+	 * Stored list pageID input from webUI
 	 */
-	@RequestMapping(value = "/getFBData", method = RequestMethod.GET)
-	public String home(Model model) {
-		logger.info("Welcome get fb data page!");
-
-		return "getFBData";
-	}
+	private String[] listPageID;
 
 	/**
 	 * Call method save data
@@ -78,8 +72,7 @@ public class GetFacebookDataController {
 	 * @throws RemoteException
 	 */
 	@RequestMapping(value = "/saveFBData", method = RequestMethod.POST)
-	@ResponseBody
-	public String saveFBData(Model model, HttpServletRequest req)
+	public 	@ResponseBody String saveFBData(Model model, HttpServletRequest req)
 			throws RemoteException {
 		logger.info("Process form");
 
@@ -92,6 +85,11 @@ public class GetFacebookDataController {
 		 * Store <PageID, List<Post> data>
 		 */
 		Map<String, List<List<Post>>> hsMapFBData = new LinkedHashMap<String, List<List<Post>>>();
+		
+		/**
+		 * Store facebook page information
+		 */
+		List<Page_Info> listFanPage = new ArrayList<Page_Info>();
 
 		/**
 		 * Get parameter from request of client
@@ -103,22 +101,35 @@ public class GetFacebookDataController {
 		String userAT = fbParamObj.get("userAccessToken").getAsString();
 		// get pageID
 		String pageID = fbParamObj.get("pageID").getAsString();
+		// get date value
+		String inputDate = fbParamObj.get("inputDate").getAsString();
 
 		facebookClient23 = new DefaultFacebookClient(userAT, Version.VERSION_2_3);
 
 		this.listPageID = pageID.split(",");
-
+		
 		for (String itemPageID : listPageID) {
+			// Get Confession page name
+			Page fanPage = facebookClient23.fetchObject(
+					itemPageID.trim(), Page.class,  Parameter.with("fields", "name"));
+			logger.info("working with " + fanPage.getName());
+			
+			/**
+			 * Add each pageInfo to List and then insert into database
+			 */
+			Page_Info pageInfo = new Page_Info(Long.parseLong(itemPageID), fanPage.getName());
+			listFanPage.add(pageInfo);
+			
 			// TODO: need to add parameter: since date value
 			// Store list of post foreach page
 			List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
 
 			Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
 					itemPageID.trim() + "/feed", Post.class,
-					Parameter.with("since", INPUT_DATE));
+					Parameter.with("since", inputDate));
 
 			// New
-			pagesPosts.add(listPostsFirst.getData());
+			pagesPosts.add(listPostsFirst.getData());			
 			String nextPage = listPostsFirst.getNextPageUrl();
 			while (nextPage != null) {
 				Connection<Post> listPostsContinous;
@@ -134,11 +145,14 @@ public class GetFacebookDataController {
 			// Put data
 			hsMapFBData.put(itemPageID, pagesPosts);
 		}
-		logger.info("done get fb data!");
 
 		try {
+			// save facebook data
 			saveFBData(hsMapFBData);
+			// save PAGE_INFO
+			savePageInfo(listFanPage);
 			response = "{\"ID\": \"1\"}";
+			logger.info("done get fb data!");
 		} catch (SQLException e) {
 			logger.info(e.getMessage());
 			response = "{\"ID\": \"2\"}";
@@ -227,12 +241,22 @@ public class GetFacebookDataController {
 		try {
 			HomeController.server.saveFBData(fbDataToInsertDB);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			logger.info(e.getMessage());
+			logger.info("Get error when insert FB database");
 		}
 		
 	}
 
+	/**
+	 * save facebook page info
+	 * @param listFanPage
+	 */
+	private void savePageInfo(List<Page_Info> listFanPage){
+		try {
+			HomeController.server.savePageInfo(listFanPage);
+		} catch (RemoteException e) {
+			logger.info("Get error when insert PAGE_INFO");
+		}
+	}
 	/**
 	 * Convert input from font Helvetica to UTF-8 format
 	 * 
@@ -250,4 +274,21 @@ public class GetFacebookDataController {
 
 		return input;
 	}
+
+//	public void testFunc(){
+//		facebookClient23 = new DefaultFacebookClient(
+//				"CAACEdEose0cBADEDT3COZBTZAA3QWCUYyyPZAWI6g8Symrk9lw5WEbqJ5W0wHfOLkSX1ZBx0TeYX3lEexegTnBseVKGYttmo44dpfR55Bd5q9Ir44D7FxdsaM7pB8lHRXBWOdQ53C5X2varUs7XT8KYAI1KYiH9ow45ipvOZBrJIzGOUxn6onpLR4zFD8n01OUN6q0OvoZAQZDZD",
+//				Version.VERSION_2_3);
+//		Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
+//				"447498478655695_958920147513523".trim() + "/comments", Post.class);
+//		List<Post> lstPost = listPostsFirst.getData();
+//		for (Post post : lstPost) {
+//			System.out.println(post.getMessage());
+//		}
+//	}
+//	
+//	public static void main(String[] args) {
+//		GetFacebookDataController sd = new GetFacebookDataController();
+//		sd.testFunc();
+//	}
 }
