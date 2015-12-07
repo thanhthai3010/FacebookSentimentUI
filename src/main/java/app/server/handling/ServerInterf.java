@@ -45,7 +45,7 @@ public interface ServerInterf extends Remote {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public ListReportData processSentiment(int topicID) throws RemoteException;
+	public List<ListReportData> processSentiment(int topicID) throws RemoteException;
 	
 	/**
 	 * This function will get data of facebook using list pageID input and dates
