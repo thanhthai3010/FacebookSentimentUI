@@ -20,11 +20,31 @@
 
 			var userAccessToken = $('#userAccessToken').val();
 			var pageID = $('#pageID').val();
+			
+			var date = $('#inputDate').val();
+			var d=new Date(date.split("/").reverse().join("-"));
+			var dd=d.getDate();
+			var mm=d.getMonth()+1;
+			var yy=d.getFullYear();
+			var newDate = "0";
+			var newMonth = "0";
+			
+			if (Math.floor(dd / 10) == 0)
+				newDate += dd.toString();
+			else
+				newDate = dd.toString();
+
+			if (Math.floor(mm / 10) == 0)
+				newMonth += mm.toString();
+			else
+				newMonth = mm.toString();
+			var inputDate = newMonth + "/" + newDate + "/" + yy;
 
 			// paramter 
 			var fbParameters = {
 				"userAccessToken" : userAccessToken,
-				"pageID" : pageID
+				"pageID" : pageID,
+				"inputDate": inputDate
 			};
 
 			var data = {};
@@ -34,18 +54,18 @@
 				url : "./saveFBData",
 				type : "POST",
 				dataType : 'json',
+				async:false,
 				data : data,
 				succes : function(response) {
-					var rs = JSON.parse(response);
-					if (rs.ID == 1) {
+					if (response.ID == "1") {
 						alert('Hello world!');
 					} else {
 						alert('Error!');
 					}
 				},
-				error : function(response) {
-					alert('Hellos!');
-				}
+	            error : function(xhr, status){
+	                console.log(status);
+	            }
 			});
 		});
 
