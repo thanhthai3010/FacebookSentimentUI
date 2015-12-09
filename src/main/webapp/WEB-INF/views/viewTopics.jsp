@@ -48,6 +48,9 @@ svg:hover {
 
 </head>
 <body>
-	<div id=display></div>
+	<div class="container">
+		<h2>Students discussion topics</h2>
+		<div id=display></div>
+	</div>
 </body>
 </html>

@@ -26,11 +26,11 @@ function drawChart(pieChart) {
 		height : 500,
 		is3D : true,
 		slices : [ {
-			color : '#228B22'
+			color : '#168616'
 		}, {
-			color : '#FA8072'
+			color : '#E2241E'
 		}, {
-			color : '#FFE4C4'
+			color : '#f0ad4e'
 		} ]
 	};
 
@@ -41,12 +41,12 @@ function drawChart(pieChart) {
 }
 function convertToColorString(intColor) {
 	switch (intColor) {
-	case 0:
-		return '#FFE4C4';
 	case 1:
-		return '#228B22';
+		return '#168616';
+	case 0:
+		return '#f0ad4e';
 	case -1:
-		return '#FA8072';
+		return '#E2241E';
 	}
 }
 
