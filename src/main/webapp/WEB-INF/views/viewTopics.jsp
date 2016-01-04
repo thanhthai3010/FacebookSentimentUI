@@ -49,7 +49,7 @@ svg:hover {
 </head>
 <body>
 	<div class="container">
-		<h2>Students discussion topics</h2>
+		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
 		<div id=display></div>
 	</div>
 </body>

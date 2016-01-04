@@ -18,6 +18,7 @@ import app.utils.dto.FacebookData;
 import app.utils.dto.JsonDataToDrawChart;
 import app.utils.dto.ListReportData;
 import app.utils.dto.ListTopic;
+import app.utils.dto.Page_Info;
 import app.utils.dto.PieChart;
 
 @Controller
@@ -81,6 +82,21 @@ public class TopicHandlingController {
 			model.addAttribute("error", "Please select another data");
 			return "analysisData";
 		} else {
+			List<Page_Info> listPageInfo = new ArrayList<Page_Info>();
+			try {
+				listPageInfo = HomeController.server.getListPageInfo();
+			} catch (RemoteException e) {
+				logger.info("Have an error when getting list of page info");
+			}
+			String pageName = "";
+			for (Page_Info page_Info : listPageInfo) {
+				if (page_Info.getPageID().equals(Long.parseLong(lstPageID.get(0)))) {
+					pageName = page_Info.getPageName();
+				}
+			}
+			model.addAttribute("pageName", pageName);
+			model.addAttribute("dateFrom", dateFrom);
+			model.addAttribute("dateTo", dateTo);
 			return "viewTopics";
 		}
 	}
