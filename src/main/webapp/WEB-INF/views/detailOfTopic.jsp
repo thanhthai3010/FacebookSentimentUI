@@ -24,6 +24,7 @@
 			<div id="chart_div" style="width: 700; height: 500"></div>
 		</div>
 		<div class="col-md-6">
+			<h3>PAGE INFO</h3>
 			<table class="table">
 				<thead>
 					<tr>
@@ -34,9 +35,7 @@
 				<tbody>
 					<tr>
 						<td>Profile Picture</td>
-						<td><img
-							src="${urlImage}"
-							alt="Page Profile Picture"></td>
+						<td><img src="${urlImage}" alt="Page Profile Picture"></td>
 					</tr>
 
 					<tr>
@@ -87,7 +86,7 @@
 		<input type="hidden" id="topicID" value="${topicID }">
 
 	</div>
-	
+
 	<script>
 		$.ajax({
 			url : 'https://www.google.com/jsapi?callback',
