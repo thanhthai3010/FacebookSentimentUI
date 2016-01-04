@@ -15,8 +15,9 @@ String.format = function() {
 }
 
 function divClick(div) {
+	var pageID = $('#pageID').val();
 	var index = div.getAttribute('data-value');
-	var url = "./pieChart?id=" + index;
+	var url = "./pieChart?id=" + index +"&pageID=" + pageID;
 	window.location = url;
 }
 

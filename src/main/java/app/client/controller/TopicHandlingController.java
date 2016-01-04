@@ -82,21 +82,20 @@ public class TopicHandlingController {
 			model.addAttribute("error", "Please select another data");
 			return "analysisData";
 		} else {
-			List<Page_Info> listPageInfo = new ArrayList<Page_Info>();
+			Page_Info pageInfo = new Page_Info();
 			try {
-				listPageInfo = HomeController.server.getListPageInfo();
+				pageInfo = HomeController.server.getPageInfoByPageID(pageID);
 			} catch (RemoteException e) {
 				logger.info("Have an error when getting list of page info");
 			}
-			String pageName = "";
-			for (Page_Info page_Info : listPageInfo) {
-				if (page_Info.getPageID().equals(Long.parseLong(lstPageID.get(0)))) {
-					pageName = page_Info.getPageName();
-				}
-			}
+			String pageName = pageInfo.getPageName();
+
 			model.addAttribute("pageName", pageName);
 			model.addAttribute("dateFrom", dateFrom);
 			model.addAttribute("dateTo", dateTo);
+			
+			model.addAttribute("pageID", lstPageID.get(0));
+			
 			return "viewTopics";
 		}
 	}
@@ -134,8 +133,9 @@ public class TopicHandlingController {
 		try {
 			topicID = Integer.parseInt(request.getParameter("id"));
 		} catch (Exception e) {
-			logger.info("Has problem here");
+			logger.info("Has problem when get topicID");
 		}
+
 		// first of all, we need to get list of comment to process sentiment
 		List<ListReportData> affterSentiment = HomeController.server.processSentiment(topicID);
 		
@@ -167,6 +167,22 @@ public class TopicHandlingController {
 		}
 		model.addAttribute("topicID", topicID);
 		
+		String pageID = "";
+		Page_Info pageInfo = new Page_Info();
+		try {
+			pageID = request.getParameter("pageID");
+			try {
+				pageInfo = HomeController.server.getPageInfoByPageID(pageID);
+			} catch (RemoteException e) {
+				logger.info("Have an error when getting list of page info");
+			}
+		} catch (Exception e) {
+			logger.info("Has problem when get pageID");
+		}
+		model.addAttribute("urlImage", pageInfo.getUrlImage());
+		model.addAttribute("about", pageInfo.getAbout());
+		model.addAttribute("description", pageInfo.getDescription());
+		model.addAttribute("website", pageInfo.getWebsite());
 		
 		return "detailOfTopic";
 

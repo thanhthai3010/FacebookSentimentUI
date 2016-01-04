@@ -51,6 +51,7 @@ svg:hover {
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
 		<div id=display></div>
+		<input type="hidden" id="pageID" value="${pageID }">
 	</div>
 </body>
 </html>

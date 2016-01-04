@@ -66,13 +66,14 @@ public class GetFacebookDataController {
 
 	/**
 	 * Call method save data
+	 * 
 	 * @param model
 	 * @param req
 	 * @return message
 	 * @throws RemoteException
 	 */
 	@RequestMapping(value = "/saveFBData", method = RequestMethod.POST)
-	public 	@ResponseBody String saveFBData(Model model, HttpServletRequest req)
+	public @ResponseBody String saveFBData(Model model, HttpServletRequest req)
 			throws RemoteException {
 		logger.info("Process form");
 
@@ -80,12 +81,12 @@ public class GetFacebookDataController {
 		 * response result to web
 		 */
 		String response = STRING_BLANK;
-		
+
 		/**
 		 * Store <PageID, List<Post> data>
 		 */
 		Map<String, List<List<Post>>> hsMapFBData = new LinkedHashMap<String, List<List<Post>>>();
-		
+
 		/**
 		 * Store facebook page information
 		 */
@@ -95,7 +96,8 @@ public class GetFacebookDataController {
 		 * Get parameter from request of client
 		 */
 		String fbParameters = req.getParameter("0");
-		JsonObject fbParamObj = new Gson().fromJson(fbParameters, JsonObject.class);
+		JsonObject fbParamObj = new Gson().fromJson(fbParameters,
+				JsonObject.class);
 
 		// get Access Token
 		String userAT = fbParamObj.get("userAccessToken").getAsString();
@@ -104,22 +106,30 @@ public class GetFacebookDataController {
 		// get date value
 		String inputDate = fbParamObj.get("inputDate").getAsString();
 
-		facebookClient23 = new DefaultFacebookClient(userAT, Version.VERSION_2_3);
+		facebookClient23 = new DefaultFacebookClient(userAT,
+				Version.VERSION_2_3);
 
 		this.listPageID = pageID.split(",");
-		
+
 		for (String itemPageID : listPageID) {
 			// Get Confession page name
-			Page fanPage = facebookClient23.fetchObject(
-					itemPageID.trim(), Page.class,  Parameter.with("fields", "name"));
+			Page fanPage = facebookClient23
+					.fetchObject(
+							itemPageID.trim(),
+							Page.class,
+							Parameter.with("fields",
+											"name,about,description,website,picture.type(large)"));
 			logger.info("working with " + fanPage.getName());
-			
+
 			/**
 			 * Add each pageInfo to List and then insert into database
 			 */
-			Page_Info pageInfo = new Page_Info(Long.parseLong(itemPageID), fanPage.getName());
+			Page_Info pageInfo = new Page_Info(Long.parseLong(itemPageID),
+					fanPage.getName(), fanPage.getPicture().getUrl(),
+					fanPage.getAbout(), fanPage.getDescription(),
+					fanPage.getWebsite());
 			listFanPage.add(pageInfo);
-			
+
 			// TODO: need to add parameter: since date value
 			// Store list of post foreach page
 			List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
@@ -129,7 +139,7 @@ public class GetFacebookDataController {
 					Parameter.with("since", inputDate));
 
 			// New
-			pagesPosts.add(listPostsFirst.getData());			
+			pagesPosts.add(listPostsFirst.getData());
 			String nextPage = listPostsFirst.getNextPageUrl();
 			while (nextPage != null) {
 				Connection<Post> listPostsContinous;
@@ -141,7 +151,8 @@ public class GetFacebookDataController {
 				}
 				// Get URL of next page
 				nextPage = listPostsContinous.getNextPageUrl();
-			};
+			}
+			;
 			// Put data
 			hsMapFBData.put(itemPageID, pagesPosts);
 		}
@@ -163,7 +174,8 @@ public class GetFacebookDataController {
 	/**
 	 * get facebook status and all of comment for Service process
 	 * 
-	 * @param pagesPosts List of facebook
+	 * @param pagesPosts
+	 *            List of facebook
 	 * @return data for Service process
 	 * @throws SQLException
 	 */
@@ -189,8 +201,9 @@ public class GetFacebookDataController {
 									&& !STRING_BLANK.equals(cmtMessage)
 									&& !STRING_SPACE.equals(cmtMessage)) {
 								Comment_Data cmData = new Comment_Data(
-										Long.parseLong(item.getKey()),
-										postIdx, cmIdx, replaceSpecialCharacters(cmtMessage));
+										Long.parseLong(item.getKey()), postIdx,
+										cmIdx,
+										replaceSpecialCharacters(cmtMessage));
 								listComment_Data.add(cmData);
 							}
 
@@ -220,13 +233,13 @@ public class GetFacebookDataController {
 							cal.setTime(date);
 							dateTime = cal.get(Calendar.YEAR) + "-"
 									+ (cal.get(Calendar.MONTH) + 1) + "-"
-									 + cal.get(Calendar.DATE);
+									+ cal.get(Calendar.DATE);
 						} catch (ParseException e) {
 							logger.info(e.getMessage());
 						}
 
-						Post_Data postDT = new Post_Data(
-								Long.parseLong(item.getKey()), postIdx,
+						Post_Data postDT = new Post_Data(Long.parseLong(item
+								.getKey()), postIdx,
 								replaceSpecialCharacters(postMessage), dateTime);
 						listPost_Data.add(postDT);
 					}
@@ -243,30 +256,33 @@ public class GetFacebookDataController {
 		} catch (RemoteException e) {
 			logger.info("Get error when insert FB database");
 		}
-		
+
 	}
 
 	/**
 	 * save facebook page info
+	 * 
 	 * @param listFanPage
 	 */
-	private void savePageInfo(List<Page_Info> listFanPage){
+	private void savePageInfo(List<Page_Info> listFanPage) {
 		try {
 			HomeController.server.savePageInfo(listFanPage);
 		} catch (RemoteException e) {
 			logger.info("Get error when insert PAGE_INFO");
 		}
 	}
+
 	/**
 	 * Convert input from font Helvetica to UTF-8 format
 	 * 
-	 * @param input String
+	 * @param input
+	 *            String
 	 * @return String after convert to UTF-8 String
 	 */
 	public String replaceSpecialCharacters(String input) {
 		if (input != null && !STRING_BLANK.equals(input)) {
 
-			//input = input.replaceAll("\\p{C}", " ");
+			// input = input.replaceAll("\\p{C}", " ");
 			input = input.replaceAll("\n", " ");
 			input = input.replaceAll("\r", " ");
 			input = input.replaceAll("#\\s*(\\w+)", " ");
@@ -275,20 +291,20 @@ public class GetFacebookDataController {
 		return input;
 	}
 
-//	public void testFunc(){
-//		facebookClient23 = new DefaultFacebookClient(
-//				"CAACEdEose0cBADEDT3COZBTZAA3QWCUYyyPZAWI6g8Symrk9lw5WEbqJ5W0wHfOLkSX1ZBx0TeYX3lEexegTnBseVKGYttmo44dpfR55Bd5q9Ir44D7FxdsaM7pB8lHRXBWOdQ53C5X2varUs7XT8KYAI1KYiH9ow45ipvOZBrJIzGOUxn6onpLR4zFD8n01OUN6q0OvoZAQZDZD",
-//				Version.VERSION_2_3);
-//		Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
-//				"447498478655695_958920147513523".trim() + "/comments", Post.class);
-//		List<Post> lstPost = listPostsFirst.getData();
-//		for (Post post : lstPost) {
-//			System.out.println(post.getMessage());
-//		}
-//	}
-//	
-//	public static void main(String[] args) {
-//		GetFacebookDataController sd = new GetFacebookDataController();
-//		sd.testFunc();
-//	}
+	// public void testFunc(){
+	// facebookClient23 = new DefaultFacebookClient(
+	// "CAACEdEose0cBADEDT3COZBTZAA3QWCUYyyPZAWI6g8Symrk9lw5WEbqJ5W0wHfOLkSX1ZBx0TeYX3lEexegTnBseVKGYttmo44dpfR55Bd5q9Ir44D7FxdsaM7pB8lHRXBWOdQ53C5X2varUs7XT8KYAI1KYiH9ow45ipvOZBrJIzGOUxn6onpLR4zFD8n01OUN6q0OvoZAQZDZD",
+	// Version.VERSION_2_3);
+	// Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
+	// "447498478655695_958920147513523".trim() + "/comments", Post.class);
+	// List<Post> lstPost = listPostsFirst.getData();
+	// for (Post post : lstPost) {
+	// System.out.println(post.getMessage());
+	// }
+	// }
+	//
+	// public static void main(String[] args) {
+	// GetFacebookDataController sd = new GetFacebookDataController();
+	// sd.testFunc();
+	// }
 }
