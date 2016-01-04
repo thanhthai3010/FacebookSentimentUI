@@ -1,39 +1,50 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
-  <head>
-  <title>Display topic detail</title>
-  <link rel="shortcut icon"  href="<c:url value="/resources/image/favicon.ico" />"  type='image/vnd.microsoft.icon'/>
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
- <script src="<c:url value="/resources/js/jquery.js" />"></script>
+<head>
+<title>Display topic detail</title>
+<link rel="shortcut icon"
+	href="<c:url value="/resources/image/favicon.ico" />"
+	type='image/vnd.microsoft.icon' />
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="<c:url value="/resources/js/jquery.js" />"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="<c:url value="/resources/css/bootstrap.min.css" />">
-<script
-	src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
-<script
-	src="<c:url value="/resources/js/detailOfTopic.js" />"></script>
-<style>
+	href="<c:url value="/resources/css/detailOfTopic.css" />">
+<script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
+<script src="<c:url value="/resources/js/detailOfTopic.js" />"></script>
 
-.pieInfor{
-  border: 1px solid #eeeeee;
-  margin: 6px 0px 6px 0px;
-  padding: 6px 10px 6px 10px;
-  font-family: Arial;
-  font-size: 18px;
-  -webkit-border-radius: 8px;
-}
+</head>
 
-</style>
-  </head>
-
-  <body>
-    <div id="chart_div" style="width:700; height:500"></div>
+<body>
+	<div id="chart_div" style="width: 700; height: 500"></div>
 	<div class="container">
 		<h2>Detail of sentiment analsis</h2>
-		<div id="report_div" style="font-size: 1.15em; color: white;"></div>
+		<div id="report_div" style="font-size: 1.15em; color: white;">
+
+			<div class="panel with-nav-tabs panel-primary">
+				<div class="panel-heading">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#tabPositive" data-toggle="tab">Positive</a></li>
+						<li><a href="#tabNeutral" data-toggle="tab">Neutral</a></li>
+						<li><a href="#tabNegative" data-toggle="tab">Negative</a></li>
+					</ul>
+				</div>
+				<div class="panel-body">
+					<div class="tab-content">
+						<div class="tab-pane fade in active" id="tabPositive"></div>
+
+						<div class="tab-pane fade" id="tabNeutral"></div>
+
+						<div class="tab-pane fade" id="tabNegative"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
 	</div>
-<input type="hidden" id="topicID" value="${topicID }">
+	<input type="hidden" id="topicID" value="${topicID }">
 
 	<script>
 		$.ajax({
@@ -51,8 +62,13 @@
 
 							// draw Pie Chart first
 							drawChart(JSON.parse(obj.listPieChart));
+							
 							// draw detail data
-							displayDetailData(JSON.parse(obj.listDetailData));
+// 							displayDetailData(JSON.parse(obj.listDetailData));
+							 var code = generateCodeStatus(JSON.parse(obj.listDetailData));
+							 $("#tabPositive").append(code.html1);
+							 $("#tabNeutral").append(code.html2);
+							 $("#tabNegative").append(code.html3);
 						});
 					}
 				});

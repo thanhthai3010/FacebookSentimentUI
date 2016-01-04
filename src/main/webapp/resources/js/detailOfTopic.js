@@ -64,6 +64,7 @@ function displayChart(pie_chart) {
 
 /**
  * get color for panel
+ * 
  * @param typeColor
  * @returns {String}
  */
@@ -85,6 +86,7 @@ function getPanelColor(typeColor) {
 
 /**
  * get color for label
+ * 
  * @param typeColor
  * @returns {String}
  */
@@ -106,38 +108,135 @@ function getLabelColor(typeColor) {
 
 /**
  * draw a list detail for report
+ * 
  * @param reportObj
  */
-function displayDetailData(reportObj) {
-	for ( var i in reportObj) {
+// function displayDetailData(reportObj) {
+// for ( var i in reportObj) {
+//
+// var strGroup = "";
+// strGroup = ' <div class="panel-group" >\
+// <div class="panel '
+// + getPanelColor(reportObj[i].statusData.typeColor)
+// + '">\
+// <div class="panel-heading">\
+// <h3 class="panel-title">\
+// <a data-toggle="collapse" href="#collapse'
+// + i
+// + '">'
+// + reportObj[i].statusData.contentData
+// + '</a>\
+// </h3>\
+// </div>\
+// <div class="panel-collapse collapse" id="collapse'
+// + i + '">';
+//
+// for ( var j in reportObj[i].listCommentData) {
+// strGroup += '<div class="panel-body '
+// + getLabelColor(reportObj[i].listCommentData[j].typeColor)
+// + ' ">' + reportObj[i].listCommentData[j].contentData
+// + '</div>';
+// }
+// strGroup+='<div class="panel-footer panel-primary">End of status</div>\
+// </div>\
+// </div>\
+// </div>';
+// $('#report_div').append(strGroup);
+// }
+// }
+function generateCodeComment(listCommentData) {
+	var html = "";
 
-		var strGroup = "";
-		strGroup = '	<div class="panel-group" >\
-			<div class="panel '
-				+ getPanelColor(reportObj[i].statusData.typeColor)
-				+ '">\
-				<div class="panel-heading">\
-					<h3 class="panel-title">\
-						<a data-toggle="collapse" href="#collapse'
-				+ i
-				+ '">'
-				+ reportObj[i].statusData.contentData
-				+ '</a>\
-					</h3>\
-				</div>\
-				<div class="panel-collapse collapse" id="collapse'
-				+ i + '">';
+	for (j in listCommentData) {
 
-		for ( var j in reportObj[i].listCommentData) {
-			strGroup += '<div class="panel-body '
-					+ getLabelColor(reportObj[i].listCommentData[j].typeColor)
-					+ ' ">' + reportObj[i].listCommentData[j].contentData
-					+ '</div>';
-		}
-		strGroup+='<div class="panel-footer panel-primary">End of status</div>\
-			</div>\
-			</div>\
-		</div>';
-		$('#report_div').append(strGroup);
+		html += '<div class="panel-body '
+				+ getLabelColor(listCommentData[j].typeColor) + ' ">'
+				+ listCommentData[j].contentData + '</div>';
 	}
+	return html;
+}
+
+function generateCodeStatus(listDetailData) {
+	this.html1 = "";
+	this.html2 = "";
+	this.html3 = "";
+
+	for (i in listDetailData) {
+
+		switch (listDetailData[i].statusData.typeColor) {
+		case 1:
+			var html = '<div class="panel-group">\
+     <div class="panel panel-success">\
+       <div class="panel-heading">\
+      <h4 class="panel-title">\
+        <a data-toggle="collapse" href="#collapse'
+					+ i
+					+ '">'
+					+ listDetailData[i].statusData.contentData
+					+ '</a>\
+      </h4>\
+       </div>\
+       <div id="collapse'
+					+ i
+					+ '" class="panel-collapse collapse">\
+      '
+					+ generateCodeComment(listDetailData[i].listCommentData)
+					+ '\
+      <div class="panel-footer">End of status</div>\
+       </div>\
+     </div>\
+      </div>';
+			this.html1 += html
+			break;
+		case 0:
+			var html = '<div class="panel-group">\
+     <div class="panel panel-warning">\
+       <div class="panel-heading">\
+      <h4 class="panel-title">\
+        <a data-toggle="collapse" href="#collapse'
+					+ i
+					+ '">'
+					+ listDetailData[i].statusData.contentData
+					+ '</a>\
+      </h4>\
+       </div>\
+       <div id="collapse'
+					+ i
+					+ '" class="panel-collapse collapse">\
+      '
+					+ generateCodeComment(listDetailData[i].listCommentData)
+					+ '\
+      <div class="panel-footer">End of status</div>\
+       </div>\
+     </div>\
+      </div>';
+			this.html2 += html;
+			break;
+		case -1:
+			var html = '<div class="panel-group">\
+     <div class="panel panel-danger">\
+       <div class="panel-heading">\
+      <h4 class="panel-title">\
+        <a data-toggle="collapse" href="#collapse'
+					+ i
+					+ '">'
+					+ listDetailData[i].statusData.contentData
+					+ '</a>\
+      </h4>\
+       </div>\
+       <div id="collapse'
+					+ i
+					+ '" class="panel-collapse collapse">\
+      '
+					+ generateCodeComment(listDetailData[i].listCommentData)
+					+ '\
+      <div class="panel-footer">End of status</div>\
+       </div>\
+     </div>\
+      </div>';
+			this.html3 += html;
+			break;
+		}
+	}
+	return this;
 }
