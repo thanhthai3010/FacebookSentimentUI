@@ -2,7 +2,7 @@ package app.utils.dto;
 
 import java.io.Serializable;
 
-public class TextValue implements Serializable{
+public class TextValueWordCloud implements Serializable{
 
 	/**
 	 * 
@@ -15,10 +15,10 @@ public class TextValue implements Serializable{
 		return text;
 	}
 
-	public TextValue() {
+	public TextValueWordCloud() {
 	}
 
-	public TextValue(String text, Double value) {
+	public TextValueWordCloud(String text, Double value) {
 		super();
 		this.text = text;
 		this.value = value;

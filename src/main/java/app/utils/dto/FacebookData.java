@@ -1,7 +1,6 @@
 package app.utils.dto;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,13 +18,13 @@ public class FacebookData implements Serializable{
 	/**
 	 * This is main data
 	 */
-	private Map<String, List<String>> fbDataForService;
+	private Map<Integer, StatusAndListComment> fbDataForService;
 
 	/**
-	 * getFbDataForService
+	 * getFbDataForService <Post data, List Of Comments>
 	 * @return Map<String, List<String>>
 	 */
-	public Map<String, List<String>> getFbDataForService() {
+	public Map<Integer, StatusAndListComment> getFbDataForService() {
 		return fbDataForService;
 	}
 
@@ -33,7 +32,7 @@ public class FacebookData implements Serializable{
 	 * setFbDataForService
 	 * @param fbDataForService Map<String, List<String>>
 	 */
-	public void setFbDataForService(Map<String, List<String>> fbDataForService) {
+	public void setFbDataForService(Map<Integer, StatusAndListComment> fbDataForService) {
 		this.fbDataForService = fbDataForService;
 	}
 }
