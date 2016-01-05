@@ -58,7 +58,7 @@ $(function(){
 	</div>
 	<div class="col-sm-4 box-info" id="analysisData">
 		<img src="<c:url value="/resources/image/analysis.png" />" height=100 />
-		<h2>ANALYZING DATA</h2>
+		<h2>DATA ANALYSIS</h2>
 		<h3>Start analysis using available data.</h3>
 	</div>
 	<div class="col-sm-4 box-info" id="aboutUs">

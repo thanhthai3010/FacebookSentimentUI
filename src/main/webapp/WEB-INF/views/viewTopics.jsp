@@ -44,6 +44,15 @@ svg:hover {
 	cursor: pointer;
 	transition:0.5s;
 }
+
+.container h2{
+  font-size: 2.5em;
+  font-weight: 400;
+  color: rgba(42, 38, 38, 0.7);
+  text-shadow: 1px 1px 3px #23203b;
+  text-align: center;
+}
+
 </style>
 
 </head>
