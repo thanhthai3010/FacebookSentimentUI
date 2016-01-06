@@ -49,24 +49,24 @@
 
 			var data = {};
 			data[0] = JSON.stringify(fbParameters);
-
-			$.ajax({
-				url : "./saveFBData",
-				type : "POST",
-				dataType : 'json',
-				async:false,
-				data : data,
-				succes : function(response) {
-					if (response.ID == "1") {
-						alert('Hello world!');
-					} else {
-						alert('Error!');
-					}
-				},
-	            error : function(xhr, status){
-	                console.log(status);
-	            }
-			});
+			
+			var success = function(response) {
+				alert(response);
+			};
+			var error = function() {
+				alert("Can't get data from Facebook");
+			};
+			var ajaxObject = {
+					url : 'saveFBData',
+					type : 'POST',
+					dataType : 'json',
+					data : data,
+					success : success,
+					error : error
+				};
+			// calling
+			$.ajax(ajaxObject);
+			
 		});
 
 	});

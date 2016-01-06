@@ -162,13 +162,13 @@ public class GetFacebookDataController {
 			saveFBData(hsMapFBData);
 			// save PAGE_INFO
 			savePageInfo(listFanPage);
-			response = "{\"ID\": \"1\"}";
+			response = "Get Facebook data successful!";
 			logger.info("done get fb data!");
 		} catch (SQLException e) {
 			logger.info(e.getMessage());
-			response = "{\"ID\": \"2\"}";
+			response = "Can't get data from Facebook";
 		}
-		return response;
+		return new Gson().toJson(response);
 	}
 
 	/**
