@@ -16,11 +16,48 @@
 <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <script src="<c:url value="/resources/js/detailOfTopic.js" />"></script>
 
+<style type="text/css">
+
+/**  loading screen **/
+.spinner {
+  width: 60px;
+  height: 60px;
+  margin-top: 230px;
+  margin-left: 250px;
+  animation: rotate 1.4s infinite ease-in-out, background 1.4s infinite ease-in-out alternate;
+}
+
+@keyframes rotate {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-180deg);
+  }
+}
+@keyframes background {
+  0% {
+  background-color: #27ae60;
+  }
+  50% {
+    background-color: #9b59b6;
+  }
+  100% {
+    background-color: #c0392b;
+  }
+}
+
+</style>
+
 </head>
 
 <body>
 	<div class="row">
 		<div class="col-md-6">
+			<div class="spinner"></div>
 			<div id="chart_div" style="width: 700; height: 500"></div>
 		</div>
 		<div class="col-md-6">
@@ -88,6 +125,9 @@
 	</div>
 
 	<script>
+	
+	$('#chart_div').hide();
+	
 		$.ajax({
 			url : 'https://www.google.com/jsapi?callback',
 			cache : true,

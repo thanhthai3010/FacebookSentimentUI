@@ -38,6 +38,12 @@ function drawChart(pieChart) {
 	var chart = new google.visualization.PieChart(document
 			.getElementById('chart_div'));
 	chart.draw(data, options);
+	
+	// hide loding screen
+//	$('.spinner').css("display", "none");
+	$('.spinner').hide();
+	$('#chart_div').show();
+	
 }
 function convertToColorString(intColor) {
 	switch (intColor) {
