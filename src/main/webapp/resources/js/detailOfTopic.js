@@ -117,39 +117,6 @@ function getLabelColor(typeColor) {
  * 
  * @param reportObj
  */
-// function displayDetailData(reportObj) {
-// for ( var i in reportObj) {
-//
-// var strGroup = "";
-// strGroup = ' <div class="panel-group" >\
-// <div class="panel '
-// + getPanelColor(reportObj[i].statusData.typeColor)
-// + '">\
-// <div class="panel-heading">\
-// <h3 class="panel-title">\
-// <a data-toggle="collapse" href="#collapse'
-// + i
-// + '">'
-// + reportObj[i].statusData.contentData
-// + '</a>\
-// </h3>\
-// </div>\
-// <div class="panel-collapse collapse" id="collapse'
-// + i + '">';
-//
-// for ( var j in reportObj[i].listCommentData) {
-// strGroup += '<div class="panel-body '
-// + getLabelColor(reportObj[i].listCommentData[j].typeColor)
-// + ' ">' + reportObj[i].listCommentData[j].contentData
-// + '</div>';
-// }
-// strGroup+='<div class="panel-footer panel-primary">End of status</div>\
-// </div>\
-// </div>\
-// </div>';
-// $('#report_div').append(strGroup);
-// }
-// }
 function generateCodeComment(listCommentData) {
 	var html = "";
 
@@ -188,7 +155,7 @@ function generateCodeStatus(listDetailData) {
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
-      <div class="panel-footer">End of status</div>\
+      <div class="panel-footer" style="color: black;">End of status</div>\
        </div>\
      </div>\
       </div>';
@@ -212,7 +179,7 @@ function generateCodeStatus(listDetailData) {
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
-      <div class="panel-footer">End of status</div>\
+      <div class="panel-footer" style="color: black;">End of status</div>\
        </div>\
      </div>\
       </div>';
@@ -236,7 +203,7 @@ function generateCodeStatus(listDetailData) {
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
-      <div class="panel-footer">End of status</div>\
+      <div class="panel-footer" style="color: black;">End of status</div>\
        </div>\
      </div>\
       </div>';
