@@ -61,6 +61,17 @@ a {
     border-radius: 10px;
 }
 
+.panel-body-content{
+	display: inline-block;
+	cursor: pointer;
+}
+
+.panel-body-feedBack{
+display:none;
+/* text-align:right; */
+float: right;
+}
+
 </style>
 
 </head>
@@ -134,12 +145,14 @@ a {
 			</div>
 		</div>
 		<input type="hidden" id="topicID" value="${topicID }">
-
+		<input type="hidden" id="resourcesImage" value="<c:url value="/resources/image" />">
 	</div>
 
 	<script>
 	
 // 	$('#chart_div').css("display", "none");
+$(function(){
+
 	
 		$.ajax({
 			url : 'https://www.google.com/jsapi?callback',
@@ -164,12 +177,19 @@ a {
 							$("#tabPositive").append(code.html1);
 							$("#tabNeutral").append(code.html2);
 							$("#tabNegative").append(code.html3);
+							
+							$(".panel-body-content").click(function(){
+						   		$(this).parent().find("div.panel-body-feedBack").slideToggle();
+						   		$(this).parent().find("div.panel-body-feedBack").css("display", "inline-block");
+							});
+							
 						});
 					}
 				});
 				return true;
 			}
 		});
+});
 	</script>
 </body>
 </html>

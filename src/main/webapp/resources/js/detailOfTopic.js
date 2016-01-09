@@ -120,11 +120,17 @@ function getLabelColor(typeColor) {
 function generateCodeComment(listCommentData) {
 	var html = "";
 
+	var resourcesImage = $('#resourcesImage').val();
+	
 	for (j in listCommentData) {
 
-		html += '<div class="panel-body '
-				+ getLabelColor(listCommentData[j].typeColor) + ' ">'
-				+ listCommentData[j].contentData + '</div>';
+		html += '<div class="panel-body ' + getLabelColor(listCommentData[j].typeColor) + ' ">' 
+				+ '<div class="panel-body-content">' + listCommentData[j].contentData +' </div>'
+				+ '<div class="panel-body-feedBack">\
+					<img src="'+ resourcesImage + "/smile.png" + '" width=50 />\
+					<img src="" width=50 />\
+					<img src="" width=50 /></div>'
+				+ '</div>';
 	}
 	return html;
 }
@@ -151,8 +157,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
-      '
+					+ '" class="panel-collapse collapse" style="margin-left: 20px;">'
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
       <div class="panel-footer" style="color: black;">End of status</div>\
@@ -199,8 +204,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
-      '
+					+ '" class="panel-collapse collapse" style="margin-left: 20px;"> '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
       <div class="panel-footer" style="color: black;">End of status</div>\
