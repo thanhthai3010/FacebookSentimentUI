@@ -24,7 +24,7 @@ function drawChart(pieChart) {
 		title : 'Statistical Of Sentiment Analysis',
 		width : 700,
 		height : 500,
-		is3D : true,
+		is3D : false,
 		slices : [ {
 			color : '#168616'
 		}, {
@@ -184,7 +184,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse">\
+					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
@@ -208,7 +208,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse">\
+					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
@@ -232,7 +232,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse">\
+					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\

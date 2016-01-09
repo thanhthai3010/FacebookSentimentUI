@@ -46,6 +46,7 @@ function setError(message) {
 	document.getElementById("display-error").innerHTML = message;
 }
 function validate() {
+	
 	var isDateValid = true;
 
 	var dateFrom = new Date(document.getElementById('date-from').value);
@@ -62,6 +63,10 @@ function validate() {
 		isDateValid = false;
 	}
 
+	if (isDateValid) {
+		$('#loader-wrapper').show();
+	}
+	
 	return isDateValid;
 
 }
