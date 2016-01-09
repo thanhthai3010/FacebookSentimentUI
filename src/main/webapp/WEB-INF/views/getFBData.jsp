@@ -10,6 +10,7 @@
 <script
 	src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <link rel="stylesheet" href="<c:url value="/resources/css/getFBData.css" />">
+<link rel="stylesheet" href="<c:url value="/resources/css/screenLoading.css" />">
 
 <script type="text/javascript">
 
@@ -18,6 +19,8 @@
 
 		$('#getFBData').click(function() {
 
+			$('#loader-wrapper').show();
+			
 			var userAccessToken = $('#userAccessToken').val();
 			var pageID = $('#pageID').val();
 			
@@ -51,6 +54,7 @@
 			data[0] = JSON.stringify(fbParameters);
 			
 			var success = function(response) {
+				$('#loader-wrapper').hide();
 				alert(response);
 			};
 			var error = function() {
@@ -75,6 +79,12 @@
 </head>
 
 <body>
+
+<!-- Loading screen -->
+	<div id="loader-wrapper">
+		<div id="box-light"></div>
+		<div id="loader"></div>
+	</div>
 
 	<div class="getData">
 		<div class="heading">
