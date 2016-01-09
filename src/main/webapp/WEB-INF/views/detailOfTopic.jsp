@@ -19,12 +19,16 @@
 <style type="text/css">
 
 /**  loading screen **/
-.spinner {
+.spinner  {
   width: 60px;
   height: 60px;
   margin-top: 230px;
   margin-left: 250px;
   animation: rotate 1.4s infinite ease-in-out, background 1.4s infinite ease-in-out alternate;
+}
+
+a {
+	text-decoration: none !important;
 }
 
 @keyframes rotate {
@@ -50,6 +54,13 @@
   }
 }
 
+.pageInfo {
+    box-shadow: 1px 1px 5px #ddd;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
 </style>
 
 </head>
@@ -61,36 +72,38 @@
 			<div id="chart_div" style="width: 700; height: 500;position:absolute"></div>
 		</div>
 		<div class="col-md-6">
-			<h3>PAGE INFO</h3>
-			<table class="table">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Information</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Profile Picture</td>
-						<td><img src="${urlImage}" alt="Page Profile Picture"></td>
-					</tr>
-
-					<tr>
-						<td>About</td>
-						<td>${about}</td>
-					</tr>
-
-					<tr>
-						<td>Description</td>
-						<td>${description}</td>
-					</tr>
-
-					<tr>
-						<td>Website</td>
-						<td>${website}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="pageInfo">
+				<h3 style="font-size: 25px; font-weight: bold; text-align: center;">PAGE INFO</h3>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Information</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Profile Picture</td>
+							<td><img src="${urlImage}" alt="Page Profile Picture"></td>
+						</tr>
+	
+						<tr>
+							<td>About</td>
+							<td>${about}</td>
+						</tr>
+	
+						<tr>
+							<td>Description</td>
+							<td>${description}</td>
+						</tr>
+	
+						<tr>
+							<td>Website</td>
+							<td>${website}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 

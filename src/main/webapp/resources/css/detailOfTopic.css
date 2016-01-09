@@ -61,3 +61,11 @@
 	{
 	background-color: #4a9fe9;
 }
+a:hover
+  {
+/*   	text-shadow: 0 0 10px #ddd; */
+  	color:blue;
+    text-decoration:none;
+    cursor:pointer;
+   }
+   
