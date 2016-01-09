@@ -11,7 +11,9 @@
 	src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <link rel="stylesheet" href="<c:url value="/resources/css/getFBData.css" />">
 <link rel="stylesheet" href="<c:url value="/resources/css/screenLoading.css" />">
-
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/navigation.css" />">
+	
 <script type="text/javascript">
 
 
@@ -79,7 +81,7 @@
 </head>
 
 <body>
-
+<jsp:include page="navigation.jsp" ></jsp:include>
 <!-- Loading screen -->
 	<div id="loader-wrapper">
 		<div id="box-light"></div>

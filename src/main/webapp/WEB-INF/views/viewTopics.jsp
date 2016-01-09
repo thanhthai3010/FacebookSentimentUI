@@ -18,6 +18,8 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/bootstrap.min.css" />">
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/navigation.css" />">
 
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,700&subset=latin,vietnamese,latin-ext' rel='stylesheet' type='text/css'>
 
@@ -57,6 +59,7 @@ svg:hover {
 
 </head>
 <body>
+<jsp:include page="navigation.jsp" ></jsp:include>
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
 		<div id=display></div>

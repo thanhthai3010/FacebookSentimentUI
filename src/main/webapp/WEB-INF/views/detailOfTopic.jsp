@@ -13,6 +13,9 @@
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/detailOfTopic.css" />">
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/navigation.css" />">
+	
 <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <script src="<c:url value="/resources/js/detailOfTopic.js" />"></script>
 
@@ -77,6 +80,7 @@ float: right;
 </head>
 
 <body>
+<jsp:include page="navigation.jsp" ></jsp:include>
 	<div class="row">
 		<div class="col-md-6" style="position:relative;">
 			<div class="spinner" style="position:absolute"></div>
