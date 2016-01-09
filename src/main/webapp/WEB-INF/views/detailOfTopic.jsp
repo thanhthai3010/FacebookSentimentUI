@@ -58,7 +58,7 @@ a {
 }
 
 .pageInfo {
-    box-shadow: 1px 1px 5px #ddd;
+    box-shadow: 1px 1px 15px #ddd;
     padding: 10px;
     margin: 10px;
     border-radius: 10px;
@@ -124,7 +124,7 @@ float: right;
 
 	<div class="row">
 		<div class="container">
-			<h2>Detail of sentiment analsis</h2>
+			<h2>Detail of sentiment analysis</h2>
 			<div id="report_div" style="font-size: 1.15em; color: white;">
 
 				<div class="panel with-nav-tabs panel-primary">
