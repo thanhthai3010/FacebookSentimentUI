@@ -56,9 +56,9 @@
 
 <body>
 	<div class="row">
-		<div class="col-md-6">
-			<div class="spinner"></div>
-			<div id="chart_div" style="width: 700; height: 500"></div>
+		<div class="col-md-6" style="position:relative;">
+			<div class="spinner" style="position:absolute"></div>
+			<div id="chart_div" style="width: 700; height: 500;position:absolute"></div>
 		</div>
 		<div class="col-md-6">
 			<h3>PAGE INFO</h3>
@@ -126,7 +126,7 @@
 
 	<script>
 	
-	$('#chart_div').hide();
+// 	$('#chart_div').css("display", "none");
 	
 		$.ajax({
 			url : 'https://www.google.com/jsapi?callback',
