@@ -14,6 +14,7 @@
 <script
 	src="<c:url value="/resources/js/analysisData.js" />"></script>
 <link rel="stylesheet" href="<c:url value="/resources/css/analysisData.css" />">
+<link rel="stylesheet" href="<c:url value="/resources/css/screenLoading.css" />">
 <style>
 #display-error {
 	color: red;
@@ -25,6 +26,12 @@
 </head>
 
 <body>
+
+<!-- Loading screen -->
+	<div id="loader-wrapper">
+		<div id="box-light"></div>
+		<div id="loader"></div>
+	</div>
 
 	<div class="analysis">
 		<div class="heading">
