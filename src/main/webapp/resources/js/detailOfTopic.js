@@ -157,7 +157,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse" style="margin-left: 20px;">'
+					+ '" class="panel-collapse collapse" style="margin-left: 40px;">'
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
       <div class="panel-footer" style="color: black;">End of status</div>\
@@ -180,7 +180,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse" style="margin-left: 20px;">\
+					+ '" class="panel-collapse collapse" style="margin-left: 40px;">\
       '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
@@ -204,7 +204,7 @@ function generateCodeStatus(listDetailData) {
        </div>\
        <div id="collapse'
 					+ i
-					+ '" class="panel-collapse collapse" style="margin-left: 20px;"> '
+					+ '" class="panel-collapse collapse" style="margin-left: 40px;"> '
 					+ generateCodeComment(listDetailData[i].listCommentData)
 					+ '\
       <div class="panel-footer" style="color: black;">End of status</div>\
