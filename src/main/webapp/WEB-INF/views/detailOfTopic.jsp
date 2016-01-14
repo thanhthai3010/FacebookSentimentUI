@@ -114,7 +114,7 @@ float: right;
 	
 						<tr>
 							<td>Website</td>
-							<td>${website}</td>
+							<td><a href="${website}">${website}</a></td>
 						</tr>
 					</tbody>
 				</table>
