@@ -127,9 +127,9 @@ function generateCodeComment(listCommentData) {
 		html += '<div class="panel-body ' + getLabelColor(listCommentData[j].typeColor) + ' ">' 
 				+ '<div class="panel-body-content">' + listCommentData[j].contentData +' </div>'
 				+ '<div class="panel-body-feedBack">\
-					<img src="'+ resourcesImage + "/neg.png" + '" width=50 />\
-					<img src="'+ resourcesImage + "/neutral.png" + '" width=50 />\
-					<img src="'+ resourcesImage + "/pos.png" + '" width=50 /></div>'
+					<img style="cursor:pointer" src="'+ resourcesImage + "/pos.png" + '" width=50 />\
+					<img style="cursor:pointer" src="'+ resourcesImage + "/neu.png" + '" width=50 />\
+					<img style="cursor:pointer" src="'+ resourcesImage + "/neg.png" + '" width=50 /></div>'
 				+ '</div>';
 	}
 	return html;
