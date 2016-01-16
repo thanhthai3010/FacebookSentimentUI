@@ -45,6 +45,11 @@ public class TopicHandlingController {
 	private static final int POSITIVE = 1;
 	
 	/**
+	 * Handle if server is busy or not
+	 */
+	private static boolean isProcessing = false;
+	
+	/**
 	 * Process LDA and output topics
 	 * @param model
 	 * @param req
@@ -55,49 +60,64 @@ public class TopicHandlingController {
 	public String startAnalysisProcess(Model model, HttpServletRequest req,
 			String pageID, String dateFrom, String dateTo)
 			throws RemoteException {
-		logger.info("View word cloud of topic");
-		
-		boolean errorFlag = false;
-		
-		String[] lstPageIDFromClient = pageID.split(",");
-		
-		List<String> lstPageID = new ArrayList<String>();
-		for (String pageItem : lstPageIDFromClient) {
-			lstPageID.add(pageItem);
-		}
-		//TODO
-		// please check value of getFBDataByPageIDAndDate() method return.
-		// If we does not have data, show message for user.
-		FacebookData inputDataForService = new FacebookData();
-		inputDataForService = HomeController.server.getFBDataByPageIDAndDate(
-				lstPageID, dateFrom, dateTo);
-		
-		if (inputDataForService.getFbDataForService().isEmpty()) {
-			errorFlag = true;
-		}
-		
-		HomeController.server.processLDA(inputDataForService);
-
-		if (errorFlag) {
-			model.addAttribute("error", "Please select another data");
-			return "analysisData";
+		logger.info("Processing for /startAnalysis");
+		if(isProcessing){
+			logger.info("Server is busy.");
+			req.getSession().setAttribute("previousPage", "startAnalysis");
+			return "busyPage";
 		} else {
-			Page_Info pageInfo = new Page_Info();
-			try {
-				pageInfo = HomeController.server.getPageInfoByPageID(pageID);
-			} catch (RemoteException e) {
-				logger.info("Have an error when getting list of page info");
-			}
-			String pageName = pageInfo.getPageName();
-
-			model.addAttribute("pageName", pageName);
-			model.addAttribute("dateFrom", dateFrom);
-			model.addAttribute("dateTo", dateTo);
-			
-			model.addAttribute("pageID", lstPageID.get(0));
-			
-			return "viewTopics";
+			isProcessing = true;
 		}
+		try {
+			logger.info("View word cloud of topic");
+			
+			boolean errorFlag = false;
+			
+			String[] lstPageIDFromClient = pageID.split(",");
+			
+			List<String> lstPageID = new ArrayList<String>();
+			for (String pageItem : lstPageIDFromClient) {
+				lstPageID.add(pageItem);
+			}
+			//TODO
+			// please check value of getFBDataByPageIDAndDate() method return.
+			// If we does not have data, show message for user.
+			FacebookData inputDataForService = new FacebookData();
+			inputDataForService = HomeController.server.getFBDataByPageIDAndDate(
+					lstPageID, dateFrom, dateTo);
+			
+			if (inputDataForService.getFbDataForService().isEmpty()) {
+				errorFlag = true;
+			}
+			
+			HomeController.server.processLDA(inputDataForService);
+	
+			if (errorFlag) {
+				model.addAttribute("error", "Please select another data");
+				isProcessing = false;
+				return "analysisData";
+			} else {
+				Page_Info pageInfo = new Page_Info();
+				try {
+					pageInfo = HomeController.server.getPageInfoByPageID(pageID);
+				} catch (RemoteException e) {
+					logger.info("Have an error when getting list of page info");
+				}
+				String pageName = pageInfo.getPageName();
+	
+				model.addAttribute("pageName", pageName);
+				model.addAttribute("dateFrom", dateFrom);
+				model.addAttribute("dateTo", dateTo);
+				
+				model.addAttribute("pageID", lstPageID.get(0));
+				isProcessing = false;
+				return "viewTopics";
+			}
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			isProcessing = false;
+			return "error";
+		}		
 	}
 	
 	/**
@@ -110,11 +130,24 @@ public class TopicHandlingController {
 	@ResponseBody
 	@RequestMapping(value = "/getListTopic", method = RequestMethod.GET, produces = "text/html; charset=utf-8") 
 	public String getListTopicsView(Model model, HttpServletRequest req) throws RemoteException {
-		
-		logger.info("Starting draw word-cloud");
-		this.describeTopics = HomeController.server.getDescribleTopics();
-		
-		return describeTopics.toTopicsJson();
+		logger.info("Processing for /getListTopic");
+		if(isProcessing){
+			logger.info("Server is busy.");
+			req.getSession().setAttribute("previousPage", "getListTopic");
+			return "busyPage";
+		} else {
+			isProcessing = true;
+		}
+		try {
+			logger.info("Starting draw word-cloud");
+			this.describeTopics = HomeController.server.getDescribleTopics();
+			isProcessing = false;
+			return describeTopics.toTopicsJson();
+		} catch (Exception ex){
+			logger.error(ex.getMessage());
+			isProcessing = false;
+			return "error";
+		}
 	}
 	
 	/**
@@ -128,63 +161,89 @@ public class TopicHandlingController {
 	@RequestMapping(value = "/topicID", method = RequestMethod.GET, produces = "text/html; charset=utf-8")
 	public String getPieData(Model model, HttpServletRequest request)
 			throws RemoteException {
-		
-		int topicID = 1;
-		try {
-			topicID = Integer.parseInt(request.getParameter("id"));
-		} catch (Exception e) {
-			logger.info("Has problem when get topicID");
+		logger.info("Processing for /topicID");
+		if(isProcessing){
+			logger.info("Server is busy.");
+			request.getSession().setAttribute("previousPage", "topicID");
+			return "busyPage";
+		} else {
+			isProcessing = true;
 		}
-
-		// first of all, we need to get list of comment to process sentiment
-		List<ListReportData> affterSentiment = HomeController.server.processSentiment(topicID);
-		
-		/**
-		 * get data to draw pie chart
-		 */
-		List<PieChart> listPieChart = getCharData(affterSentiment);
-		
-		// convert to JSon
-		String listDetailData = ListReportData.toJson(affterSentiment);
-		
-		String pieChartJson = PieChart.pieChartsToJson(listPieChart);
-		
-		JsonDataToDrawChart jsonData = new JsonDataToDrawChart(listDetailData, pieChartJson);
-		
-		return jsonData.toJsonData();
+		try {
+			int topicID = 1;
+			try {
+				topicID = Integer.parseInt(request.getParameter("id"));
+			} catch (Exception e) {
+				logger.info("Has problem when get topicID");
+			}
+	
+			// first of all, we need to get list of comment to process sentiment
+			List<ListReportData> affterSentiment = HomeController.server.processSentiment(topicID);
+			
+			/**
+			 * get data to draw pie chart
+			 */
+			List<PieChart> listPieChart = getCharData(affterSentiment);
+			
+			// convert to JSon
+			String listDetailData = ListReportData.toJson(affterSentiment);
+			
+			String pieChartJson = PieChart.pieChartsToJson(listPieChart);
+			
+			JsonDataToDrawChart jsonData = new JsonDataToDrawChart(listDetailData, pieChartJson);
+			isProcessing = false;
+			return jsonData.toJsonData();
+		} catch (Exception ex){
+			logger.error(ex.getMessage());
+			isProcessing = false;
+			return "error";
+		}
 
 	}
 	
 	@RequestMapping(value = "/pieChart", method = RequestMethod.GET, produces = "text/html; charset=utf-8")
 	public String callDrawPieChart(Model model, HttpServletRequest request)
 			throws RemoteException {
-		
-		int topicID = 1;
-		try {
-			topicID = Integer.parseInt(request.getParameter("id"));
-		} catch (Exception e) {
-			logger.info("Has problem here");
+		logger.info("Processing for /pieChart");
+		if(isProcessing){
+			logger.info("Server is busy.");
+			request.getSession().setAttribute("previousPage", "pieChart");
+			return "busyPage";
+		} else {
+			isProcessing = true;
 		}
-		model.addAttribute("topicID", topicID);
-		
-		String pageID = "";
-		Page_Info pageInfo = new Page_Info();
 		try {
-			pageID = request.getParameter("pageID");
+			int topicID = 1;
 			try {
-				pageInfo = HomeController.server.getPageInfoByPageID(pageID);
-			} catch (RemoteException e) {
-				logger.info("Have an error when getting list of page info");
+				topicID = Integer.parseInt(request.getParameter("id"));
+			} catch (Exception e) {
+				logger.info("Has problem here");
 			}
-		} catch (Exception e) {
-			logger.info("Has problem when get pageID");
+			model.addAttribute("topicID", topicID);
+			
+			String pageID = "";
+			Page_Info pageInfo = new Page_Info();
+			try {
+				pageID = request.getParameter("pageID");
+				try {
+					pageInfo = HomeController.server.getPageInfoByPageID(pageID);
+				} catch (RemoteException e) {
+					logger.info("Have an error when getting list of page info");
+				}
+			} catch (Exception e) {
+				logger.info("Has problem when get pageID");
+			}
+			model.addAttribute("urlImage", pageInfo.getUrlImage());
+			model.addAttribute("about", pageInfo.getAbout());
+			model.addAttribute("description", pageInfo.getDescription());
+			model.addAttribute("website", pageInfo.getWebsite());
+			isProcessing = false;
+			return "detailOfTopic";
+		} catch (Exception ex){
+			logger.error(ex.getMessage());
+			isProcessing = false;
+			return "error";
 		}
-		model.addAttribute("urlImage", pageInfo.getUrlImage());
-		model.addAttribute("about", pageInfo.getAbout());
-		model.addAttribute("description", pageInfo.getDescription());
-		model.addAttribute("website", pageInfo.getWebsite());
-		
-		return "detailOfTopic";
 
 	}
 	
@@ -195,7 +254,6 @@ public class TopicHandlingController {
 	 */
 	public List<PieChart> getCharData(List<ListReportData> lstReportData){
 		// loop all pieData input to calculate sum of each type color
-		
 		List<PieChart> lstPieChar = new ArrayList<PieChart>();
 		
 		int numOfPos = 0;

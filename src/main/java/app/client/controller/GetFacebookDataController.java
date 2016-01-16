@@ -63,6 +63,11 @@ public class GetFacebookDataController {
 	 * Stored list pageID input from webUI
 	 */
 	private String[] listPageID;
+	
+	/**
+	 * Handle if server is busy or not
+	 */
+	private static boolean isProcessing = false;
 
 	/**
 	 * Call method save data
@@ -75,100 +80,115 @@ public class GetFacebookDataController {
 	@RequestMapping(value = "/saveFBData", method = RequestMethod.POST)
 	public @ResponseBody String saveFBData(Model model, HttpServletRequest req)
 			throws RemoteException {
-		logger.info("Process form");
-
-		/**
-		 * response result to web
-		 */
-		String response = STRING_BLANK;
-
-		/**
-		 * Store <PageID, List<Post> data>
-		 */
-		Map<String, List<List<Post>>> hsMapFBData = new LinkedHashMap<String, List<List<Post>>>();
-
-		/**
-		 * Store facebook page information
-		 */
-		List<Page_Info> listFanPage = new ArrayList<Page_Info>();
-
-		/**
-		 * Get parameter from request of client
-		 */
-		String fbParameters = req.getParameter("0");
-		JsonObject fbParamObj = new Gson().fromJson(fbParameters,
-				JsonObject.class);
-
-		// get Access Token
-		String userAT = fbParamObj.get("userAccessToken").getAsString();
-		// get pageID
-		String pageID = fbParamObj.get("pageID").getAsString();
-		// get date value
-		String inputDate = fbParamObj.get("inputDate").getAsString();
-
-		facebookClient23 = new DefaultFacebookClient(userAT,
-				Version.VERSION_2_3);
-
-		this.listPageID = pageID.split(",");
-
-		for (String itemPageID : listPageID) {
-			// Get Confession page name
-			Page fanPage = facebookClient23
-					.fetchObject(
-							itemPageID.trim(),
-							Page.class,
-							Parameter.with("fields",
-											"name,about,description,website,picture.type(large)"));
-			logger.info("working with " + fanPage.getName());
-
-			/**
-			 * Add each pageInfo to List and then insert into database
-			 */
-			Page_Info pageInfo = new Page_Info(Long.parseLong(itemPageID),
-					fanPage.getName(), fanPage.getPicture().getUrl(),
-					fanPage.getAbout(), fanPage.getDescription(),
-					fanPage.getWebsite());
-			listFanPage.add(pageInfo);
-
-			// TODO: need to add parameter: since date value
-			// Store list of post foreach page
-			List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
-
-			Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
-					itemPageID.trim() + "/feed", Post.class,
-					Parameter.with("since", inputDate));
-
-			// New
-			pagesPosts.add(listPostsFirst.getData());
-			String nextPage = listPostsFirst.getNextPageUrl();
-			while (nextPage != null) {
-				Connection<Post> listPostsContinous;
-				listPostsContinous = facebookClient23.fetchConnectionPage(
-						nextPage, Post.class);
-				// Check is the last page
-				if (listPostsContinous.getData().size() > 0) {
-					pagesPosts.add(listPostsContinous.getData());
-				}
-				// Get URL of next page
-				nextPage = listPostsContinous.getNextPageUrl();
-			}
-			;
-			// Put data
-			hsMapFBData.put(itemPageID, pagesPosts);
+		logger.info("Processing for /saveFBData");
+		if(isProcessing){
+			req.getSession().setAttribute("previousPage", "saveFBData");
+			logger.info("Server is busy.");
+			return "busyPage";
+		} else {
+			isProcessing = true;
 		}
-
 		try {
-			// save facebook data
-			saveFBData(hsMapFBData);
-			// save PAGE_INFO
-			savePageInfo(listFanPage);
-			response = "Get Facebook data successful!";
-			logger.info("done get fb data!");
-		} catch (SQLException e) {
-			logger.info(e.getMessage());
-			response = "Can't get data from Facebook";
+			logger.info("Process form");
+	
+			/**
+			 * response result to web
+			 */
+			String response = STRING_BLANK;
+	
+			/**
+			 * Store <PageID, List<Post> data>
+			 */
+			Map<String, List<List<Post>>> hsMapFBData = new LinkedHashMap<String, List<List<Post>>>();
+	
+			/**
+			 * Store facebook page information
+			 */
+			List<Page_Info> listFanPage = new ArrayList<Page_Info>();
+	
+			/**
+			 * Get parameter from request of client
+			 */
+			String fbParameters = req.getParameter("0");
+			JsonObject fbParamObj = new Gson().fromJson(fbParameters,
+					JsonObject.class);
+	
+			// get Access Token
+			String userAT = fbParamObj.get("userAccessToken").getAsString();
+			// get pageID
+			String pageID = fbParamObj.get("pageID").getAsString();
+			// get date value
+			String inputDate = fbParamObj.get("inputDate").getAsString();
+	
+			facebookClient23 = new DefaultFacebookClient(userAT,
+					Version.VERSION_2_3);
+	
+			this.listPageID = pageID.split(",");
+	
+			for (String itemPageID : listPageID) {
+				// Get Confession page name
+				Page fanPage = facebookClient23
+						.fetchObject(
+								itemPageID.trim(),
+								Page.class,
+								Parameter.with("fields",
+												"name,about,description,website,picture.type(large)"));
+				logger.info("working with " + fanPage.getName());
+	
+				/**
+				 * Add each pageInfo to List and then insert into database
+				 */
+				Page_Info pageInfo = new Page_Info(Long.parseLong(itemPageID),
+						fanPage.getName(), fanPage.getPicture().getUrl(),
+						fanPage.getAbout(), fanPage.getDescription(),
+						fanPage.getWebsite());
+				listFanPage.add(pageInfo);
+	
+				// TODO: need to add parameter: since date value
+				// Store list of post foreach page
+				List<List<Post>> pagesPosts = new ArrayList<List<Post>>();
+	
+				Connection<Post> listPostsFirst = facebookClient23.fetchConnection(
+						itemPageID.trim() + "/feed", Post.class,
+						Parameter.with("since", inputDate));
+	
+				// New
+				pagesPosts.add(listPostsFirst.getData());
+				String nextPage = listPostsFirst.getNextPageUrl();
+				while (nextPage != null) {
+					Connection<Post> listPostsContinous;
+					listPostsContinous = facebookClient23.fetchConnectionPage(
+							nextPage, Post.class);
+					// Check is the last page
+					if (listPostsContinous.getData().size() > 0) {
+						pagesPosts.add(listPostsContinous.getData());
+					}
+					// Get URL of next page
+					nextPage = listPostsContinous.getNextPageUrl();
+				}
+				
+				// Put data
+				hsMapFBData.put(itemPageID, pagesPosts);
+			}
+	
+			try {
+				// save facebook data
+				saveFBData(hsMapFBData);
+				// save PAGE_INFO
+				savePageInfo(listFanPage);
+				response = "Get Facebook data successful!";
+				logger.info("done get fb data!");
+			} catch (SQLException e) {
+				logger.info(e.getMessage());
+				response = "Can't get data from Facebook";
+			}
+			isProcessing = false;
+			return new Gson().toJson(response);
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			isProcessing = false;
+			return "error";
 		}
-		return new Gson().toJson(response);
 	}
 
 	/**
