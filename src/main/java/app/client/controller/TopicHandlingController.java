@@ -60,7 +60,7 @@ public class TopicHandlingController {
 	public String startAnalysisProcess(Model model, HttpServletRequest req,
 			String pageID, String dateFrom, String dateTo)
 			throws RemoteException {
-		logger.info("Processing for /startAnalysis");
+		logger.info("Processing for /analysisData");
 		if(isProcessing){
 			logger.info("Server is busy.");
 			req.getSession().setAttribute("previousPage", "startAnalysis");
@@ -133,7 +133,7 @@ public class TopicHandlingController {
 		logger.info("Processing for /getListTopic");
 		if(isProcessing){
 			logger.info("Server is busy.");
-			req.getSession().setAttribute("previousPage", "getListTopic");
+			req.getSession().setAttribute("previousPage", "analysisData");
 			return "busyPage";
 		} else {
 			isProcessing = true;
@@ -164,7 +164,7 @@ public class TopicHandlingController {
 		logger.info("Processing for /topicID");
 		if(isProcessing){
 			logger.info("Server is busy.");
-			request.getSession().setAttribute("previousPage", "topicID");
+			request.getSession().setAttribute("previousPage", "analysisData");
 			return "busyPage";
 		} else {
 			isProcessing = true;
@@ -207,7 +207,7 @@ public class TopicHandlingController {
 		logger.info("Processing for /pieChart");
 		if(isProcessing){
 			logger.info("Server is busy.");
-			request.getSession().setAttribute("previousPage", "pieChart");
+			request.getSession().setAttribute("previousPage", "analysisData");
 			return "busyPage";
 		} else {
 			isProcessing = true;

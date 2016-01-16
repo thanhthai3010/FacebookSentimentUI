@@ -29,7 +29,7 @@
 			<h2>
 				Server is busy. Please try again later!
 			</h2>
-			<button type="button" 
+			<button type="button" class="btn button"
 					id="backToPre"
 					onclick="window.location='${previousPage}'">
 					Back

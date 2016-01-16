@@ -82,7 +82,7 @@ public class GetFacebookDataController {
 			throws RemoteException {
 		logger.info("Processing for /saveFBData");
 		if(isProcessing){
-			req.getSession().setAttribute("previousPage", "saveFBData");
+			req.getSession().setAttribute("previousPage", "getFBData");
 			logger.info("Server is busy.");
 			return "busyPage";
 		} else {
