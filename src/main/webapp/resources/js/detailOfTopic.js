@@ -112,6 +112,22 @@ function getLabelColor(typeColor) {
 	return labelColor;
 }
 
+/** save feed back*/
+function saveFeedBack(image, label){
+	
+	var content = $(image).parent().parent().find(".panel-body-content").html();
+	
+		$.post("./saveFeedBack", {
+				content :content,
+				label : label
+			}, function(data) {
+				}).done(function(data) {
+					alert(data);
+				}).fail(function() {
+					alert(data);
+				});
+}
+
 /**
  * draw a list detail for report
  * 
@@ -127,9 +143,9 @@ function generateCodeComment(listCommentData) {
 		html += '<div class="panel-body ' + getLabelColor(listCommentData[j].typeColor) + ' ">' 
 				+ '<div class="panel-body-content">' + listCommentData[j].contentData +' </div>'
 				+ '<div class="panel-body-feedBack">\
-					<img style="cursor:pointer" src="'+ resourcesImage + "/pos.png" + '" width=50 />\
-					<img style="cursor:pointer" src="'+ resourcesImage + "/neu.png" + '" width=50 />\
-					<img style="cursor:pointer" src="'+ resourcesImage + "/neg.png" + '" width=50 /></div>'
+					<img class="imgFeedBack" onclick="saveFeedBack(this, 1)"  src="'+ resourcesImage + "/pos.png" + '" width=50 />\
+					<img class="imgFeedBack" onclick="saveFeedBack(this, 0)"  src="'+ resourcesImage + "/neu.png" + '" width=50 />\
+					<img class="imgFeedBack" onclick="saveFeedBack(this, -1)"  src="'+ resourcesImage + "/neg.png" + '" width=50 /></div>'
 				+ '</div>';
 	}
 	return html;

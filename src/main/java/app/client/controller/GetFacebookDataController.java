@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.utils.dto.Comment_Data;
 import app.utils.dto.FacebookDataToInsertDB;
+import app.utils.dto.Feed_Back;
 import app.utils.dto.Page_Info;
 import app.utils.dto.Post_Data;
 
@@ -292,6 +293,31 @@ public class GetFacebookDataController {
 		}
 	}
 
+	/**
+	 * save feedBack info
+	 * @param feedBack Feed_Back
+	 */
+	@RequestMapping(value = "/saveFeedBack", method = RequestMethod.POST)
+	public @ResponseBody String saveFeedBack(Model model, HttpServletRequest req) {
+		/**
+		 * response result to web
+		 */
+		String response = STRING_BLANK;
+		
+		String content = req.getParameter("content");
+		int label = Integer.parseInt(req.getParameter("label"));
+		
+		try {
+			Feed_Back feedBack = new Feed_Back(content, label);
+			HomeController.server.saveFeedBack(feedBack);
+			response = "Save FeedBack sucessfull, thank you very much";
+		} catch (RemoteException e) {
+			logger.info("Get error when insert Feed_Back");
+			response = "Can not FeedBack sucessfull, please try later";
+		}
+		return response;
+	}
+	
 	/**
 	 * Convert input from font Helvetica to UTF-8 format
 	 * 
