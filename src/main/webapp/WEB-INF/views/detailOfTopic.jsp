@@ -6,18 +6,23 @@
 <link rel="shortcut icon"
 	href="<c:url value="/resources/image/favicon.ico" />"
 	type='image/vnd.microsoft.icon' />
-<!--Load the AJAX API-->
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script src="<c:url value="/resources/js/jquery.js" />"></script>
+
+<!-- Bootstrap Core CSS -->
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/detailOfTopic.css" />">
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/navigation.css" />">
-	
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/bootstrap-dialog.min.css" />">
+
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="<c:url value="/resources/js/jquery.js" />"></script>
 <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <script src="<c:url value="/resources/js/detailOfTopic.js" />"></script>
+<script src="<c:url value="/resources/js/bootstrap-dialog.min.js" />"></script>
 
 <style type="text/css">
 

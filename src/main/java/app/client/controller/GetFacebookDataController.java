@@ -310,10 +310,10 @@ public class GetFacebookDataController {
 		try {
 			Feed_Back feedBack = new Feed_Back(content, label);
 			HomeController.server.saveFeedBack(feedBack);
-			response = "Save FeedBack sucessfull, thank you very much";
+			response = "Save FeedBack sucessfull, thank you very much!";
 		} catch (RemoteException e) {
 			logger.info("Get error when insert Feed_Back");
-			response = "Can not FeedBack sucessfull, please try later";
+			response = "Can not FeedBack sucessfull, please try later!";
 		}
 		return response;
 	}

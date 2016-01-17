@@ -122,9 +122,17 @@ function saveFeedBack(image, label){
 				label : label
 			}, function(data) {
 				}).done(function(data) {
-					alert(data);
+					 BootstrapDialog.show({
+						 	type: BootstrapDialog.TYPE_SUCCESS,
+				            title: 'Successful Message',
+				            message: data
+				        });
 				}).fail(function() {
-					alert(data);
+					 BootstrapDialog.show({
+						 	type: BootstrapDialog.TYPE_DANGER,
+				            title: 'Danger Message',
+				            message: data
+				        });
 				});
 }
 

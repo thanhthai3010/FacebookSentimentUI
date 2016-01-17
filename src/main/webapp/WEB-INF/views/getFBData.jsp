@@ -5,14 +5,21 @@
 <head>
 <meta charset="UTF-8">
 <title>Social Data Page</title>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- JavaScript file -->
 <script src="<c:url value="/resources/js/jquery.js" />"></script>
 <script
 	src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
+<script src="<c:url value="/resources/js/bootstrap-dialog.min.js" />"></script>
+
+<!-- Bootstrap Core CSS -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="<c:url value="/resources/css/getFBData.css" />">
 <link rel="stylesheet" href="<c:url value="/resources/css/screenLoading.css" />">
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/navigation.css" />">
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/bootstrap-dialog.min.css" />">
 	
 <script type="text/javascript">
 
@@ -57,10 +64,18 @@
 			
 			var success = function(response) {
 				$('#loader-wrapper').hide();
-				alert(response);
+				 BootstrapDialog.show({
+					 	type: BootstrapDialog.TYPE_SUCCESS,
+			            title: 'Successful Message',
+			            message: response
+			        });
 			};
 			var error = function() {
-				alert("Can't get data from Facebook");
+				 BootstrapDialog.show({
+					 	type: BootstrapDialog.TYPE_DANGER,
+			            title: 'Danger Message',
+			            message: 'Can not get data from Facebook'
+			        });
 			};
 			var ajaxObject = {
 					url : 'saveFBData',
