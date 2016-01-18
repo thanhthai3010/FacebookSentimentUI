@@ -66,11 +66,6 @@ public class GetFacebookDataController {
 	private String[] listPageID;
 	
 	/**
-	 * Handle if server is busy or not
-	 */
-	private static boolean isProcessing = false;
-
-	/**
 	 * Call method save data
 	 * 
 	 * @param model
@@ -82,13 +77,7 @@ public class GetFacebookDataController {
 	public @ResponseBody String saveFBData(Model model, HttpServletRequest req)
 			throws RemoteException {
 		logger.info("Processing for /saveFBData");
-		if(isProcessing){
-			req.getSession().setAttribute("previousPage", "getFBData");
-			logger.info("Server is busy.");
-			return "busyPage";
-		} else {
-			isProcessing = true;
-		}
+		
 		try {
 			logger.info("Process form");
 	
@@ -183,11 +172,9 @@ public class GetFacebookDataController {
 				logger.info(e.getMessage());
 				response = "Can't get data from Facebook";
 			}
-			isProcessing = false;
 			return new Gson().toJson(response);
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
-			isProcessing = false;
 			return "error";
 		}
 	}

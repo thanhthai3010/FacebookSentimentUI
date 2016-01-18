@@ -43,12 +43,7 @@ public class TopicHandlingController {
 	 * Positive Sentiment
 	 */
 	private static final int POSITIVE = 1;
-	
-	/**
-	 * Handle if server is busy or not
-	 */
-	private static boolean isProcessing = false;
-	
+		
 	/**
 	 * Process LDA and output topics
 	 * @param model
@@ -61,13 +56,7 @@ public class TopicHandlingController {
 			String pageID, String dateFrom, String dateTo)
 			throws RemoteException {
 		logger.info("Processing for /analysisData");
-		if(isProcessing){
-			logger.info("Server is busy.");
-			req.getSession().setAttribute("previousPage", "startAnalysis");
-			return "busyPage";
-		} else {
-			isProcessing = true;
-		}
+		
 		try {
 			logger.info("View word cloud of topic");
 			
@@ -94,7 +83,6 @@ public class TopicHandlingController {
 	
 			if (errorFlag) {
 				model.addAttribute("error", "Please select another data");
-				isProcessing = false;
 				return "analysisData";
 			} else {
 				Page_Info pageInfo = new Page_Info();
@@ -110,12 +98,10 @@ public class TopicHandlingController {
 				model.addAttribute("dateTo", dateTo);
 				
 				model.addAttribute("pageID", lstPageID.get(0));
-				isProcessing = false;
 				return "viewTopics";
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
-			isProcessing = false;
 			return "error";
 		}		
 	}
@@ -131,21 +117,12 @@ public class TopicHandlingController {
 	@RequestMapping(value = "/getListTopic", method = RequestMethod.GET, produces = "text/html; charset=utf-8") 
 	public String getListTopicsView(Model model, HttpServletRequest req) throws RemoteException {
 		logger.info("Processing for /getListTopic");
-		if(isProcessing){
-			logger.info("Server is busy.");
-			req.getSession().setAttribute("previousPage", "analysisData");
-			return "busyPage";
-		} else {
-			isProcessing = true;
-		}
 		try {
 			logger.info("Starting draw word-cloud");
 			this.describeTopics = HomeController.server.getDescribleTopics();
-			isProcessing = false;
 			return describeTopics.toTopicsJson();
 		} catch (Exception ex){
 			logger.error(ex.getMessage());
-			isProcessing = false;
 			return "error";
 		}
 	}
@@ -162,13 +139,6 @@ public class TopicHandlingController {
 	public String getPieData(Model model, HttpServletRequest request)
 			throws RemoteException {
 		logger.info("Processing for /topicID");
-		if(isProcessing){
-			logger.info("Server is busy.");
-			request.getSession().setAttribute("previousPage", "analysisData");
-			return "busyPage";
-		} else {
-			isProcessing = true;
-		}
 		try {
 			int topicID = 1;
 			try {
@@ -191,11 +161,9 @@ public class TopicHandlingController {
 			String pieChartJson = PieChart.pieChartsToJson(listPieChart);
 			
 			JsonDataToDrawChart jsonData = new JsonDataToDrawChart(listDetailData, pieChartJson);
-			isProcessing = false;
 			return jsonData.toJsonData();
 		} catch (Exception ex){
 			logger.error(ex.getMessage());
-			isProcessing = false;
 			return "error";
 		}
 
@@ -205,13 +173,6 @@ public class TopicHandlingController {
 	public String callDrawPieChart(Model model, HttpServletRequest request)
 			throws RemoteException {
 		logger.info("Processing for /pieChart");
-		if(isProcessing){
-			logger.info("Server is busy.");
-			request.getSession().setAttribute("previousPage", "analysisData");
-			return "busyPage";
-		} else {
-			isProcessing = true;
-		}
 		try {
 			int topicID = 1;
 			try {
@@ -237,11 +198,9 @@ public class TopicHandlingController {
 			model.addAttribute("about", pageInfo.getAbout());
 			model.addAttribute("description", pageInfo.getDescription());
 			model.addAttribute("website", pageInfo.getWebsite());
-			isProcessing = false;
 			return "detailOfTopic";
 		} catch (Exception ex){
 			logger.error(ex.getMessage());
-			isProcessing = false;
 			return "error";
 		}
 
