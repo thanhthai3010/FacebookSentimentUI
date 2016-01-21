@@ -54,6 +54,9 @@ svg:hover {
   text-shadow: 1px 1px 3px #23203b;
   text-align: center;
 }
+td{
+ border:1px solid red;   
+}
 
 </style>
 
@@ -62,8 +65,10 @@ svg:hover {
 <jsp:include page="navigation.jsp" ></jsp:include>
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
-		<div id=display></div>
+		<div id="display"></div>
 		<input type="hidden" id="pageID" value="${pageID }">
+		
+		<div id="table"></div>
 	</div>
 </body>
 </html>
