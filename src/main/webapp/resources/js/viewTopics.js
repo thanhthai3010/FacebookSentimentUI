@@ -14,6 +14,7 @@ String.format = function() {
 	return theString;
 }
 
+/* define click function foreach topic, after that we will show detail of topic */
 function divClick(div) {
 	var pageID = $('#pageID').val();
 	var index = div.getAttribute('data-value');
@@ -21,36 +22,45 @@ function divClick(div) {
 	window.location = url;
 }
 
-
+/*
+ * When user hover topic
+ * Display tooltip show information of each topic
+ *  */
 function divHover(div) {
 	var topicIndex = div.getAttribute('data-value');
 	var topicId = "#id" + topicIndex;
 	
 	var tableToolTip = "#tableId" + topicIndex;
-
-	var delay = 1000, setTimeoutConst;
 	
-	$(topicId).hover(function(event) {
-		var offsetX = event.clientX + 20;
-		var offsetY = event.clientY + 50;
-		setTimeoutConst = setTimeout(function() {
-			// do something
-			$(tableToolTip).css({
-				left : offsetX,
-				top : offsetY
-			});
-			$(tableToolTip).stop(true, true).fadeIn();
-		}, delay);
-
-	}, function(ev) {
-		clearTimeout(setTimeoutConst);
-		$(tableToolTip).stop(true, true).fadeOut();
-	}).mousemove(function(ev) {
-		// $(tableToolTip).css({left:ev.pageX - 300,top:ev.pageY - 50});
+	    $(topicId).qtip({
+		overwrite : false,
+		content : {
+			text : $(tableToolTip)
+		},
+		style : {
+			classes : 'qtip-blue qtip-bootstrap'
+		},
+		show : {
+			delay : 1000,
+			when : 'mouseover',
+			ready : true
+		},
+		hide : {
+			delay : 0,
+			fixed : true
+		},
+		position : {
+			target : 'mouse',
+			adjust : {
+				mouse : false
+			}
+		}
 	});
 }
 
-
+/*
+* Create html code foreach topic
+ *  */
 function generateTopic(obj, col) {
 	var str = "";
 	str += String.format(
@@ -59,8 +69,14 @@ function generateTopic(obj, col) {
 	return str;
 }
 
+/**
+ * Main function
+ */
 $(function() {
-
+	
+	/**
+	 * Call ajax to get data from service
+	 */
 	$.get("./getListTopic", function(data) {
 
 		var listTopic = JSON.parse(data);
@@ -108,12 +124,12 @@ $(function() {
 			break;
 		}
 
-		// call function draw
+		// call function draw WordCloud of each topic
 		for (var j = 0; j < listTopic.length; j++) {
 			drawWordCloud(listTopic[j].textValues, "#id" + listTopic[j].idTopic);
 		}
 
-		// new 
+		// draw hidden table, for create tooltip
 		drawHiddenTable(listTopic);
 		
 	});
@@ -123,33 +139,40 @@ $(function() {
 	function generateTableDiv(topicID) {
 		var str = "";
 		str += String.format(
-						'<table id="{0}" style="display: none; position:absolute; background:#FFDEAD	 !important; ">\
-			            <tr><th>Word</th> <th>Probability</th></tr>\
-						</table>', topicID);
+				'<table id="{0}" style="display: none;"></table>',
+				topicID);
 		return str;
 	}
+	
+	/**
+	 * Add table of tooltip
+	 */
 	function drawHiddenTable(dataTopic) {
 		for (var i = 0; i < dataTopic.length; i++) {
-			$('#table').append(generateTableDiv(("tableId" + dataTopic[i].idTopic)));
+			$('#table').append(
+					generateTableDiv(("tableId" + dataTopic[i].idTopic)));
 		}
-		
+
 		for (var i = 0; i < dataTopic.length; i++) {
-			createHiddenTableData(dataTopic[i].textValues, ("#tableId" + dataTopic[i].idTopic))
+			createHiddenTableData(dataTopic[i].textValues,
+					("#tableId" + dataTopic[i].idTopic))
 		}
-		
-		
-		// show data
 	}
 	
+	/**
+	 * Create html code for hidden table
+	 */
 	function createHiddenTableData(tableData, id) {
 		var trHTML = '';
 		$.each(tableData, function (i, item) {
-            trHTML += '<tr><td>' + item.text + '</td><td>' + item.value + '</td></tr>';
+            trHTML += '<tr><td>' + item.text + '</td><td>' + item.value.toFixed(3) + '</td></tr>';
         });
         $(id).append(trHTML);
 	}
 	
-	// function draw word cloud
+	/**
+	 * Draw WordCloud of topic
+	 */
 	function drawWordCloud(data, id) {
 
 		var fill = d3.scale.category20();
@@ -184,5 +207,4 @@ $(function() {
 					});
 		}
 	}
-
 });

@@ -9,6 +9,7 @@
 <script src="<c:url value="/resources/js/jquery.js" />"></script>
 <script src="<c:url value="/resources/js/d3.js" />"></script>
 <script src="<c:url value="/resources/js/d3.layout.cloud.js" />"></script>
+<script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.js"></script>
 <!-- Latest compiled JavaScript -->
 <script
 	src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
@@ -18,6 +19,7 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/bootstrap.min.css" />">
+<link rel="stylesheet" href="http://qtip2.com/v/stable/jquery.qtip.css">
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/navigation.css" />">
 
@@ -54,10 +56,9 @@ svg:hover {
   text-shadow: 1px 1px 3px #23203b;
   text-align: center;
 }
-td{
- border:1px solid red;   
+th, td {
+    padding: 2px;
 }
-
 </style>
 
 </head>
