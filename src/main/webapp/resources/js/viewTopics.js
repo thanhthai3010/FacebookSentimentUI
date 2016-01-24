@@ -68,6 +68,7 @@ function generateTopic(obj, col) {
 					col, "id" + obj.idTopic, obj.idTopic);
 	return str;
 }
+$("p").css("padding", "1px");
 
 /**
  * Main function
@@ -77,21 +78,25 @@ $(function() {
 	/**
 	 * Call ajax to get data from service
 	 */
+	var amountRow = 0;
 	$.get("./getListTopic", function(data) {
 
-		var listTopic = JSON.parse(data);
+		listTopic = JSON.parse(data);
 		switch (listTopic.length) {
 		case 2:
+			amountRow = 1;
 			for (var i = 0; i < listTopic.length; i++) {
 				$('#display').append(generateTopic(listTopic[i], "col-md-6"));
 			}
 			break;
 		case 3:
+			amountRow = 1;
 			for (var i = 0; i < listTopic.length; i++) {
 				$('#display').append(generateTopic(listTopic[i], "col-md-4"));
 			}
 			break;
 		case 4: // hien thi 2 dong 2-2
+			amountRow = 2;
 			for (var i = 0; i < listTopic.length; i++) {
 				$('#display').append(generateTopic(listTopic[i], "col-md-6"));
 				if (i == 1)
@@ -99,6 +104,7 @@ $(function() {
 			}
 			break;
 		case 5: // hien thi 3-2
+			amountRow = 2;
 			for (var i = 0; i < listTopic.length; i++) {
 				if (i < 3) {
 					$('#display').append(generateTopic(listTopic[i], "col-md-4"));
@@ -110,14 +116,16 @@ $(function() {
 			}
 			break;
 		case 6: // hien thi 3-3
+			amountRow = 2;
 			for (var i = 0; i < listTopic.length; i++) {
 				$('#display').append(generateTopic(listTopic[i], "col-md-4"));
 				if (i == 2)
 					$('#display').append("<div class='breakLine'></div>");
 			}
 			break;
-		default:
+		default://7 8 9
 			// hien thi 1 dong
+			amountRow = 3;
 			for (var i = 0; i < listTopic.length; i++) {
 				$('#display').append(generateTopic(listTopic[i], "col-md-4"));
 			}
@@ -131,6 +139,8 @@ $(function() {
 
 		// draw hidden table, for create tooltip
 		drawHiddenTable(listTopic);
+		var height = amountRow*300 + 15;
+		$("#display").css("height", height + "px").css("transition","0.5s");
 		
 	});
 
@@ -183,7 +193,7 @@ $(function() {
 				size : d.value*550 + 10
 			};
 		})).rotate(function() {
-			return ~~Math.floor(Math.random() * 30) - 20;
+			return ~~Math.floor(Math.random() * 30) - 26;
 		}).font("Roboto Slab").fontSize(function(d) {
 			return d.size;
 		}).on("end", draw).start();
@@ -208,3 +218,44 @@ $(function() {
 		}
 	}
 });
+
+//qtran
+function filterTopic(){
+	var strSearch = document.getElementById("searchBox").value;
+	var flag = false;
+	var topicId = 0;
+	for (var i = 0; i < listTopic.length; i++) {
+		flag = false;
+		$.each(listTopic[i].textValues, function (i, item) {
+			if((item.text.toLowerCase().indexOf(strSearch.trim().replace(new RegExp(" ", 'g'), "_").toLowerCase()) > -1) || strSearch === ''){
+				flag = true;
+				//$("#id" + (i + 1)).hide();
+			}
+            //trHTML += '<tr><td>' + item.text + '</td><td>' + item.value + '</td></tr>';
+        });
+		
+		topicId = i + 1;
+		if(!flag){
+			$("#id" + topicId).fadeOut(resizeDisplayTopic);
+		} else {
+			$("#id" + topicId).fadeIn(resizeDisplayTopic);
+		}
+		//resizeDisplayTopic();
+		//$('#display').append(generateTopic(listTopic[i], "col-md-6"));
+	}
+ 
+}
+
+function resizeDisplayTopic()
+{
+	var counter = 0;
+	 $("#display .topic").each(function(){
+		 if($(this).is(":visible")){
+			 counter++;
+		 }
+	 });
+	 var amountR = Math.ceil(counter/3);
+	 var height = amountR*300 + 15;
+	 $("#display").css("height", height + "px");
+}
+

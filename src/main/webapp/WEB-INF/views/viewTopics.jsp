@@ -29,6 +29,14 @@
 #display {
 	margin: 0 auto;
 	text-align: center;
+	background: red;
+	background: #FFF none repeat scroll 0% 0%;
+	padding-top: 10px;
+	box-shadow: 0px 0px 3px #6D98A7;
+	margin-bottom: 15px;
+}
+body {
+	background: #F5F5F5 none repeat scroll 0% 0%;
 }
 
 .onLine {
@@ -47,17 +55,25 @@ svg:hover {
 	background-color: wheat;
 	cursor: pointer;
 	transition:0.5s;
-}
+	border-radius: 200px;
+} 
 
 .container h2{
   font-size: 31px;
   font-weight: 400;
-  color: rgba(42, 38, 38, 0.7);
-  text-shadow: 1px 1px 3px #23203b;
+  color: rgba(0, 39, 152, 0.7);
   text-align: center;
 }
 th, td {
     padding: 2px;
+}
+#searchBox {
+	border: 1px solid rgb(46, 152, 255);
+	padding: 5px;
+	border-radius: 10px;
+	box-shadow: 1px 1px 5px #ddd;
+	width: 30%;
+	margin-bottom: 15px;
 }
 </style>
 
@@ -66,10 +82,14 @@ th, td {
 <jsp:include page="navigation.jsp" ></jsp:include>
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
+		<div align="right">
+			<input type="text" placeholder="Search key words" id="searchBox" onkeypress="filterTopic(this.value);"/>
+		</div>
+
 		<div id="display"></div>
 		<input type="hidden" id="pageID" value="${pageID }">
 		
-		<div id="table"></div>
+		<div id="table"> </div>
 	</div>
 </body>
 </html>

@@ -89,7 +89,7 @@ float: right;
 	<div class="row">
 		<div class="col-md-6" style="position:relative;">
 			<div class="spinner" style="position:absolute"></div>
-			<div id="chart_div" style="width: 700; height: 500;position:absolute"></div>
+			<div id="chart_div" style="width: 700; height: 500;"></div>
 		</div>
 		<div class="col-md-6">
 			<div class="pageInfo">

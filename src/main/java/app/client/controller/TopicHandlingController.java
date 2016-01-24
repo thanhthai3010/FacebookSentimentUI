@@ -127,6 +127,24 @@ public class TopicHandlingController {
 		}
 	}
 	
+	//qtran
+	@ResponseBody
+	@RequestMapping(value = "/getListTopicTitle", method = RequestMethod.GET, produces = "text/html; charset=utf-8") 
+	public String getListTopicsTitle(Model model, HttpServletRequest req) throws RemoteException {
+		logger.info("Processing for /getListTopicTitle");
+		try {
+			logger.info("Starting draw word-cloud");
+			if(this.describeTopics != null){
+				return describeTopics.toTopicsJson();
+			} else {
+				return "error:error";
+			}
+		} catch (Exception ex){
+			logger.error(ex.getMessage());
+			return "error:error";
+		}
+	}
+	
 	/**
 	 * View detail of each topic by topicID
 	 * @param model
