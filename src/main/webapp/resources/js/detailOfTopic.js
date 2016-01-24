@@ -169,7 +169,7 @@ function generateCodeStatus(listDetailData) {
 		switch (listDetailData[i].statusData.typeColor) {
 		case 1:
 			var html = '<div class="panel-group">\
-     <div class="panel panel-success">\
+     <div class="panel panel-success" style="border: none;">\
        <div class="panel-heading">\
       <h4 class="panel-title">\
         <a data-toggle="collapse" href="#collapse'
@@ -192,7 +192,7 @@ function generateCodeStatus(listDetailData) {
 			break;
 		case 0:
 			var html = '<div class="panel-group">\
-     <div class="panel panel-warning">\
+     <div class="panel panel-warning" style="border: none;">\
        <div class="panel-heading">\
       <h4 class="panel-title">\
         <a data-toggle="collapse" href="#collapse'
@@ -216,7 +216,7 @@ function generateCodeStatus(listDetailData) {
 			break;
 		case -1:
 			var html = '<div class="panel-group">\
-     <div class="panel panel-danger">\
+     <div class="panel panel-danger" style="border: none;">\
        <div class="panel-heading">\
       <h4 class="panel-title">\
         <a data-toggle="collapse" href="#collapse'
