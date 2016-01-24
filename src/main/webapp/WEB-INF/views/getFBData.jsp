@@ -27,8 +27,6 @@
 	$(document).ready(function() {
 
 		$('#getFBData').click(function() {
-
-			$('#loader-wrapper').show();
 			
 			var userAccessToken = $('#userAccessToken').val();
 			var pageID = $('#pageID').val();
@@ -52,41 +50,52 @@
 				newMonth = mm.toString();
 			var inputDate = newMonth + "/" + newDate + "/" + yy;
 
-			// paramter 
-			var fbParameters = {
-				"userAccessToken" : userAccessToken,
-				"pageID" : pageID,
-				"inputDate": inputDate
-			};
-
-			var data = {};
-			data[0] = JSON.stringify(fbParameters);
 			
-			var success = function(response) {
-				$('#loader-wrapper').hide();
-				 BootstrapDialog.show({
-					 	type: BootstrapDialog.TYPE_SUCCESS,
-			            title: 'Successful Message',
-			            message: response
-			        });
-			};
-			var error = function() {
+			if (userAccessToken != '' && pageID != '' && inputDate != '') {
+				$('#loader-wrapper').show();
+				// paramter 
+				var fbParameters = {
+					"userAccessToken" : userAccessToken,
+					"pageID" : pageID,
+					"inputDate": inputDate
+				};
+
+				var data = {};
+				data[0] = JSON.stringify(fbParameters);
+				
+				var success = function(response) {
+					$('#loader-wrapper').hide();
+					 BootstrapDialog.show({
+						 	type: BootstrapDialog.TYPE_SUCCESS,
+				            title: 'Successful Message',
+				            message: response
+				        });
+				};
+				var error = function() {
+					$('#loader-wrapper').hide();
+					 BootstrapDialog.show({
+						 	type: BootstrapDialog.TYPE_DANGER,
+				            title: 'Danger Message',
+				            message: 'Can not get data from Facebook'
+				        });
+				};
+				var ajaxObject = {
+						url : 'saveFBData',
+						type : 'POST',
+						dataType : 'json',
+						data : data,
+						success : success,
+						error : error
+					};
+				// calling
+				$.ajax(ajaxObject);
+			} else {
 				 BootstrapDialog.show({
 					 	type: BootstrapDialog.TYPE_DANGER,
 			            title: 'Danger Message',
-			            message: 'Can not get data from Facebook'
+			            message: 'Please enter missing information!'
 			        });
-			};
-			var ajaxObject = {
-					url : 'saveFBData',
-					type : 'POST',
-					dataType : 'json',
-					data : data,
-					success : success,
-					error : error
-				};
-			// calling
-			$.ajax(ajaxObject);
+			}
 			
 		});
 
@@ -113,20 +122,20 @@
 				<div class="input-group input-group-lg">
 					<span class="input-group-addon"><i
 						class="glyphicon glyphicon-user"></i></span> 
-						<input id="userAccessToken" class="form-control"  placeholder="User Access token" type="text">
+						<input id="userAccessToken" class="form-control"  placeholder="User Access token" type="text" required>
 				</div>
 
 				<div class="input-group input-group-lg">
 					<span class="input-group-addon"><i
 						class="glyphicon glyphicon-th-list"></i></span> 
-						<input id="pageID" type="text" class="form-control"  placeholder="Facebook Page ID">
+						<input id="pageID" type="text" class="form-control"  placeholder="Facebook Page ID" required>
 				</div>
 				
 				<div class="input-group input-group-lg">
 					<span class="input-group-addon">
 					<i class="glyphicon glyphicon-calendar"></i>
 					</span>
-					<input type="date" class="form-control"  id="inputDate" >
+					<input type="date" class="form-control"  id="inputDate"  required>
 				</div>
 				<button type="button" id="getFBData">Start Crawling Data</button>
 			</form>
