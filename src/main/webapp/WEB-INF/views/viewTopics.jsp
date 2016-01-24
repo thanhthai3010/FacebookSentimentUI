@@ -79,7 +79,7 @@ th, td {
 	margin-bottom: 15px;
 }
 
-#searchBox input {
+#search input:focus {
 	outline: none;
 }
 </style>
@@ -89,7 +89,7 @@ th, td {
 <jsp:include page="navigation.jsp" ></jsp:include>
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
-		<div align="right">
+		<div align="right" id="search">
 			<input type="text" placeholder="Search key words" id="searchBox" onkeyup="filterTopic(this.value);"/>
 		</div>
 
