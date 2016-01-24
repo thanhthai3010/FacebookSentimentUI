@@ -59,6 +59,11 @@ public class GetFacebookDataController {
 	 * String space
 	 */
 	private static final String STRING_SPACE = " ";
+	
+	/**
+	 * minimum length of post
+	 */
+	private static final int MIN_LENGTH_OF_POST = 200;
 
 	/**
 	 * Stored list pageID input from webUI
@@ -202,58 +207,61 @@ public class GetFacebookDataController {
 
 				// Foreach Post
 				for (Post post : lstPost) {
-					if (post.getComments() != null) {
-						for (Comment cmt : post.getComments().getData()) {
-							String cmtMessage = cmt.getMessage();
-							if (cmtMessage != null
-									&& !STRING_BLANK.equals(cmtMessage)
-									&& !STRING_SPACE.equals(cmtMessage)) {
-								Comment_Data cmData = new Comment_Data(
-										Long.parseLong(item.getKey()), postIdx,
-										cmIdx,
-										replaceSpecialCharacters(cmtMessage));
-								listComment_Data.add(cmData);
+					String postMessage = post.getMessage();
+					if (postMessage.length() > MIN_LENGTH_OF_POST) {
+						if (post.getComments() != null) {
+							for (Comment cmt : post.getComments().getData()) {
+								String cmtMessage = cmt.getMessage();
+								if (cmtMessage != null
+										&& !STRING_BLANK.equals(cmtMessage)
+										&& !STRING_SPACE.equals(cmtMessage)) {
+									Comment_Data cmData = new Comment_Data(
+											Long.parseLong(item.getKey()), postIdx,
+											cmIdx,
+											replaceSpecialCharacters(cmtMessage));
+									listComment_Data.add(cmData);
+								}
+
+								// incre cmIdx
+								cmIdx++;
+							}
+						}
+
+						// Return data <Status, List<Comment of this Status>>
+//						String postMessage = post.getMessage();
+
+						// SAVE POST_DATA
+						if (postMessage != null
+								&& !STRING_BLANK.equals(postMessage)
+								&& !STRING_SPACE.equals(postMessage)) {
+
+							String dateStr = post.getCreatedTime().toString();
+							DateFormat formatter = new SimpleDateFormat(
+									"E MMM dd HH:mm:ss Z yyyy");
+
+							String dateTime = STRING_BLANK;
+							try {
+								java.util.Date date = (java.util.Date) formatter
+										.parse(dateStr);
+
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(date);
+								dateTime = cal.get(Calendar.YEAR) + "-"
+										+ (cal.get(Calendar.MONTH) + 1) + "-"
+										+ cal.get(Calendar.DATE);
+							} catch (ParseException e) {
+								logger.info(e.getMessage());
 							}
 
-							// incre cmIdx
-							cmIdx++;
-						}
-					}
-
-					// Return data <Status, List<Comment of this Status>>
-					String postMessage = post.getMessage();
-
-					// SAVE POST_DATA
-					if (postMessage != null
-							&& !STRING_BLANK.equals(postMessage)
-							&& !STRING_SPACE.equals(postMessage)) {
-
-						String dateStr = post.getCreatedTime().toString();
-						DateFormat formatter = new SimpleDateFormat(
-								"E MMM dd HH:mm:ss Z yyyy");
-
-						String dateTime = STRING_BLANK;
-						try {
-							java.util.Date date = (java.util.Date) formatter
-									.parse(dateStr);
-
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(date);
-							dateTime = cal.get(Calendar.YEAR) + "-"
-									+ (cal.get(Calendar.MONTH) + 1) + "-"
-									+ cal.get(Calendar.DATE);
-						} catch (ParseException e) {
-							logger.info(e.getMessage());
+							Post_Data postDT = new Post_Data(Long.parseLong(item
+									.getKey()), postIdx,
+									replaceSpecialCharacters(postMessage), dateTime);
+							listPost_Data.add(postDT);
 						}
 
-						Post_Data postDT = new Post_Data(Long.parseLong(item
-								.getKey()), postIdx,
-								replaceSpecialCharacters(postMessage), dateTime);
-						listPost_Data.add(postDT);
+						// incre postIdx
+						postIdx++;
 					}
-
-					// incre postIdx
-					postIdx++;
 				}
 			}
 		}
