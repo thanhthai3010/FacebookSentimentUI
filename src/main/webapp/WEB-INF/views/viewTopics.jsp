@@ -35,6 +35,7 @@
 	box-shadow: 0px 0px 3px #6D98A7;
 	margin-bottom: 15px;
 }
+
 body {
 	background: #F5F5F5 none repeat scroll 0% 0%;
 }
@@ -48,25 +49,27 @@ body {
 }
 
 svg {
-	transition:0.5s;
+	transition: 0.5s;
 }
 
 svg:hover {
 	background-color: wheat;
 	cursor: pointer;
-	transition:0.5s;
+	transition: 0.5s;
 	border-radius: 200px;
-} 
+}
 
-.container h2{
-  font-size: 31px;
-  font-weight: 400;
-  color: rgba(0, 39, 152, 0.7);
-  text-align: center;
+.container h2 {
+	font-size: 31px;
+	font-weight: 400;
+	color: rgba(0, 39, 152, 0.7);
+	text-align: center;
 }
+
 th, td {
-    padding: 2px;
+	padding: 2px;
 }
+
 #searchBox {
 	border: 1px solid rgb(46, 152, 255);
 	padding: 5px;
@@ -74,6 +77,10 @@ th, td {
 	box-shadow: 1px 1px 5px #ddd;
 	width: 30%;
 	margin-bottom: 15px;
+}
+
+#searchBox input {
+	outline: none;
 }
 </style>
 
@@ -83,7 +90,7 @@ th, td {
 	<div class="container">
 		<h2>Hottest topics of ${pageName} from ${dateFrom} to ${dateTo}</h2>
 		<div align="right">
-			<input type="text" placeholder="Search key words" id="searchBox" onkeypress="filterTopic(this.value);"/>
+			<input type="text" placeholder="Search key words" id="searchBox" onkeyup="filterTopic(this.value);"/>
 		</div>
 
 		<div id="display"></div>
